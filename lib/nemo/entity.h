@@ -69,6 +69,7 @@ namespace nemo
         // Methods to subscribe and unsubscribe
         bool subscribe(const std::string &name, const Subscription &subscription);
         bool unsubscribe(const std::string &name);
+        void unsubscribe_all();
 
         // Methods to publish to the subscribers
         void publish(bool value_changed) const;

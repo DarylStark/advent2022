@@ -23,6 +23,11 @@ namespace nemo
         return __subscriptions.erase(name) != 0;
     }
 
+    void Entity::unsubscribe_all()
+    {
+        __subscriptions.clear();
+    }
+
     void Entity::publish(bool value_changed) const
     {
         for (const auto &[name, sub] : __subscriptions)
