@@ -2,6 +2,7 @@
 #define __COMPONENT_H__
 
 #include <string>
+
 namespace nemo
 {
     class Component

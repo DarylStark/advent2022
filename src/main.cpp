@@ -1,6 +1,5 @@
 // Arduino Includes
 #include <Arduino.h>
-
 #include "advent2022.h"
 
 // Global objects for the app
