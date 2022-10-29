@@ -44,6 +44,10 @@ public:
     // Methods for the 'moodlighting' mode
     void next_mood(const nemo::EntityEvent &e);
     void previous_mood(const nemo::EntityEvent &e);
+
+    // Methods for the 'calendar' mode
+    void next_index(const nemo::EntityEvent &e);
+    void previous_index(const nemo::EntityEvent &e);
 };
 
 #endif // __ADVENT2022_H__

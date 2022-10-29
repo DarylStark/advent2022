@@ -13,13 +13,15 @@ void Advent2022::setup()
     // are "set-up"
     _setup();
 
-    // Set the welcome text
-    NemoApp::entities["lcd.display.line0"] = std::string(" Adventkalender");
-    NemoApp::entities["lcd.display.line1"] = std::string("Aan het starten");
-
-    // Create entities for the application
+    // Create entities for the app
     NemoApp::entities["advent.mode"] = AppMode::Setup;
+
+    // Create entities for the mood lighting
     NemoApp::entities["advent.mood_current"] = -1;
+
+    // Create entities for the calendar
+    NemoApp::entities["advent.calendar_selected"] = 0;
+    NemoApp::entities["advent.calendar_turn"] = 0;
 
     // Create the moods
     __moodlightings.reserve(3);
@@ -47,7 +49,7 @@ void Advent2022::loop()
     _loop();
 
     // Delay :)
-    delay(100);
+    delay(50);
 }
 
 void Advent2022::configure_mode()
@@ -56,7 +58,10 @@ void Advent2022::configure_mode()
 
     if (static_cast<int>(mode) == AppMode::MoodLighting)
     {
-        // TODO: unsubscribe from the events of the calendar mode
+        // Unsubscribe from the events of the calendar mode
+        NemoApp::entities["next.sensor.low"].unsubscribe_all();
+        NemoApp::entities["previous.sensor.low"].unsubscribe_all();
+
         NemoApp::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_mood, this, std::placeholders::_1)});
         NemoApp::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_mood, this, std::placeholders::_1)});
 
@@ -67,43 +72,54 @@ void Advent2022::configure_mode()
 
     if (static_cast<int>(mode) == AppMode::Calendar)
     {
-        NemoApp::entities["lcd.display.line0"] = std::string("");
-        NemoApp::entities["lcd.display.line1"] = std::string("");
+        // Unsubscribe from the events of the calendar mode
+        NemoApp::entities["next.sensor.low"].unsubscribe_all();
+        NemoApp::entities["previous.sensor.low"].unsubscribe_all();
+
+        NemoApp::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_index, this, std::placeholders::_1)});
+        NemoApp::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_index, this, std::placeholders::_1)});
+
+        NemoApp::entities["lcd.display.line0"] = std::string("Kies  een  vakje");
+        NemoApp::entities["lcd.display.line1"] = std::string("en druk  [ENTER]");
+
         return;
     }
 }
 
 void Advent2022::set_mood()
 {
-    nemo::Entity &mood_current = NemoApp::entities["advent.mood_current"];
-
-    // Sanity checks
-    if (static_cast<int>(mood_current) < 0)
+    if (static_cast<int>(NemoApp::entities["advent.mode"]) == AppMode::MoodLighting)
     {
-        mood_current = static_cast<int>(__moodlightings.size() - 1);
-        return;
+        nemo::Entity &mood_current = NemoApp::entities["advent.mood_current"];
+
+        // Sanity checks
+        if (static_cast<int>(mood_current) < 0)
+        {
+            mood_current = static_cast<int>(__moodlightings.size() - 1);
+            return;
+        }
+
+        if (static_cast<int>(mood_current) >= __moodlightings.size())
+        {
+            mood_current = 0;
+            return;
+        }
+
+        // Create the string for on the screen
+        const std::string &name = __moodlightings[static_cast<int>(mood_current)];
+        const uint16_t text_space = 12;
+        uint16_t spaces_before = 6 - ((name.length() + 1) / 2);
+        uint16_t spaces_after = text_space - name.length() - spaces_before;
+
+        // Display the name on the LCD
+        std::stringstream lcd_text;
+        lcd_text << "< ";
+        lcd_text << std::string(spaces_before, ' ');
+        lcd_text << name;
+        lcd_text << std::string(spaces_after, ' ');
+        lcd_text << " >";
+        NemoApp::entities["lcd.display.line1"] = lcd_text.str();
     }
-
-    if (static_cast<int>(mood_current) >= __moodlightings.size())
-    {
-        mood_current = 0;
-        return;
-    }
-
-    // Create the string for on the screen
-    const std::string &name = __moodlightings[static_cast<int>(mood_current)];
-    const uint16_t text_space = 12;
-    uint16_t spaces_before = 6 - ((name.length() + 1) / 2);
-    uint16_t spaces_after = text_space - name.length() - spaces_before;
-
-    // Display the name on the LCD
-    std::stringstream lcd_text;
-    lcd_text << "< ";
-    lcd_text << std::string(spaces_before, ' ');
-    lcd_text << name;
-    lcd_text << std::string(spaces_after, ' ');
-    lcd_text << " >";
-    NemoApp::entities["lcd.display.line1"] = lcd_text.str();
 }
 
 void Advent2022::next_mood(const nemo::EntityEvent &e)
@@ -116,4 +132,16 @@ void Advent2022::previous_mood(const nemo::EntityEvent &e)
 {
     if (e.entity)
         NemoApp::entities["advent.mood_current"]--;
+}
+
+void Advent2022::next_index(const nemo::EntityEvent &e)
+{
+    if (e.entity)
+        NemoApp::entities["advent.calendar_turn"]++;
+}
+
+void Advent2022::previous_index(const nemo::EntityEvent &e)
+{
+    if (e.entity)
+        NemoApp::entities["advent.calendar_turn"]--;
 }
