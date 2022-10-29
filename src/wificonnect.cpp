@@ -1,7 +1,5 @@
 #include "wificonnect.h"
 
-#include <functional>
-
 // Private methods for WiFiConnect
 
 void WiFiConnect::__wifi_event(WiFiEvent_t event)
@@ -36,10 +34,19 @@ void WiFiConnect::setup()
     NemoApp::entities["wificonnect.connected_client"] = 0;
     NemoApp::entities["wificonnect.connected_client"].subscribe("update", {std::bind(&WiFiConnect::__set_screen_text, this, std::placeholders::_1)});
 
+    // Set up the webserver
+
     // Set up WiFi
     WiFi.mode(WIFI_AP);
     WiFi.softAP("Advent2022");
     WiFi.onEvent(std::bind(&WiFiConnect::__wifi_event, this, std::placeholders::_1));
+
+    // Configure the webserver
+    __web_server.on("/", std::bind(&WiFiConnect::__webserver_mainpage, this));
+    __web_server.on("/save", std::bind(&WiFiConnect::__webserver_save, this));
+
+    // Start the webserver
+    __web_server.begin();
 
     // Set a message on the screen about connecting
     NemoApp::entities["wificonnect.connected_client"] = 1;
@@ -50,6 +57,9 @@ void WiFiConnect::loop()
     // The `_loop` method of the base class will make sure all components
     // are "looped"
     _loop();
+
+    // Loop the webserver
+    __web_server.handleClient();
 
     // Delay :)
     delay(50);
@@ -67,7 +77,74 @@ void WiFiConnect::__set_screen_text(const nemo::EntityEvent &e)
     if (static_cast<int>(e.entity) == 2)
     {
         NemoApp::entities["lcd.display.line0"] = std::string(" Navigeer naar");
-        NemoApp::entities["lcd.display.line1"] = std::string("http://10.4.0.1/");
+        NemoApp::entities["lcd.display.line1"] = std::string("  192.168.4.1");
         return;
     }
+
+    if (static_cast<int>(e.entity) == 3)
+    {
+        NemoApp::entities["lcd.display.line0"] = std::string("  Vul je WiFi");
+        NemoApp::entities["lcd.display.line1"] = std::string("  gegevens in");
+        return;
+    }
+
+    if (static_cast<int>(e.entity) == 4)
+    {
+        NemoApp::entities["lcd.display.line0"] = std::string("Controleren ....");
+        NemoApp::entities["lcd.display.line1"] = std::string("");
+        return;
+    }
+
+    if (static_cast<int>(e.entity) == 5)
+    {
+        NemoApp::entities["lcd.display.line0"] = std::string("    Gelukt !");
+
+        for (uint16_t i = 3; i > 0; i--)
+        {
+            std::stringstream s;
+            s << "Herstarten in " << i << "s";
+            NemoApp::entities["lcd.display.line1"] = std::string(s.str());
+            delay(1000);
+        }
+
+        NemoApp::entities["lcd.display.line0"] = std::string("  Rebooting...");
+        NemoApp::entities["lcd.display.line1"] = std::string("");
+
+        delay(1000);
+
+        ESP.restart();
+
+        return;
+    }
+}
+
+void WiFiConnect::__webserver_mainpage()
+{
+    // Client connected
+    NemoApp::entities["wificonnect.connected_client"] = 3;
+
+    // Create the page to return
+    std::stringstream page;
+    page << "<html>\n<head>\n<title>Advent Kalender 2022</title>\n</head>\n";
+    page << "<body>\n";
+    page << "<div style='text-align: center;'>";
+    page << "<h1>Advent Kalender 2022</h1>\n";
+    page << "</div>";
+    page << "</body>\n";
+    page << "</html>\n";
+
+    // Return the page
+    __web_server.send(200, "text/html", String(page.str().c_str()));
+}
+
+void WiFiConnect::__webserver_save()
+{
+    // TODO: Implement
+
+    // This is just testcode!
+    NemoApp::entities["wificonnect.connected_client"] = 4;
+    delay(2000);
+    NemoApp::entities["wificonnect.connected_client"] = 5;
+
+    __web_server.send(200, "text/html", "Done");
 }
