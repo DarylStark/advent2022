@@ -13,28 +13,14 @@ namespace nemo
         std::list<Component *> __components;
 
     protected:
-        virtual void _setup()
-        {
-            // Setup the components
-            for (auto &component : __components)
-                component->setup();
-        };
-
-        virtual void _loop()
-        {
-            // Loop the components
-            for (auto &component : __components)
-                component->loop();
-        };
+        virtual void _setup();
+        virtual void _loop();
 
     public:
         static std::unordered_map<std::string, Entity> entities;
 
         // Methods to manage components
-        void register_component(Component &component)
-        {
-            __components.push_back(&component);
-        }
+        void register_component(Component &component);
 
         // Pure virtual methods for subclasses
         virtual void setup() = 0;

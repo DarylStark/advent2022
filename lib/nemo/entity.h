@@ -37,13 +37,12 @@ namespace nemo
         bool changed;
         std::string identifier = "";
 
-        EntityEvent(const Entity &e) : entity(e) {}
+        EntityEvent(const Entity &e);
     };
 
     // Class to define a subscription
-    class Subscription
+    struct Subscription
     {
-    public:
         std::function<void(const EntityEvent &)> function;
         bool on_unchanged = false;
         bool threaded = false;
@@ -61,156 +60,39 @@ namespace nemo
 
     public:
         // Constructors
-        Entity(value_type value) : _value(value) {}
-        Entity() {}
+        Entity(value_type value);
+        Entity();
 
         // We don't need a copy constructor
         Entity(const Entity &) = delete;
 
         // Methods to subscribe and unsubscribe
-        bool subscribe(const std::string &name, const Subscription &subscription)
-        {
-            const auto [it, success] = __subscriptions.insert({name, subscription});
-            return success;
-        }
-
-        bool unsubscribe(const std::string &name)
-        {
-            return __subscriptions.erase(name) != 0;
-        }
+        bool subscribe(const std::string &name, const Subscription &subscription);
+        bool unsubscribe(const std::string &name);
 
         // Methods to publish to the subscribers
-        void publish(bool value_changed) const
-        {
-            for (const auto &[name, sub] : __subscriptions)
-            {
-                if ((sub.on_unchanged && !value_changed) || (value_changed))
-                {
-                    EntityEvent e(*this);
-                    e.changed = value_changed;
-                    e.identifier = sub.identifier;
-                    if (sub.threaded)
-                    {
-                        // Start the function in it's own thread
-                        std::thread thread(sub.function, e);
-                        thread.detach();
-                    }
-                    else
-                    {
-                        // Start the function in the current thread
-                        sub.function(e);
-                    }
-                }
-            }
-        }
+        void publish(bool value_changed) const;
 
         // Method to set the value
-        Entity &set(value_type value)
-        {
-            bool changed = _value != value;
-            _value = value;
-            publish(changed);
-            return *this;
-        }
+        Entity &set(value_type value);
 
         // Methods to get the value and the valuetype
-        value_type get() const { return _value; }
-        entity_type_name get_type() const { return entity_type_name(_value.index()); }
+        value_type get() const;
+        entity_type_name get_type() const;
 
         // Overloading operators
-        Entity &operator=(value_type value)
-        {
-            return set(value);
-        }
-
-        Entity &operator++(int)
-        {
-            return ++(*this);
-        }
-
-        Entity &operator++()
-        {
-            // Increment operator is only available for integers and doubles
-            if (get_type() == Integer)
-            {
-                return *this = std::get<int>(_value) + 1;
-            }
-            else if (get_type() == Double)
-            {
-                return *this = std::get<double>(_value) + 1;
-            }
-            return *this;
-        }
-
-        Entity &operator--(int)
-        {
-            return --(*this);
-        }
-
-        Entity &operator--()
-        {
-            // Decrement operator is only available for integers and doubles
-            if (get_type() == Integer)
-            {
-                return *this = std::get<int>(_value) - 1;
-            }
-            else if (get_type() == Double)
-            {
-                return *this = std::get<double>(_value) - 1;
-            }
-            return *this;
-        }
-
-        bool operator!()
-        {
-            if (get_type() == Bool)
-            {
-                return !std::get<bool>(_value);
-            }
-            // TODO: Exception
-            return true;
-        }
+        Entity &operator=(value_type value);
+        Entity &operator++(int);
+        Entity &operator++();
+        Entity &operator--(int);
+        Entity &operator--();
+        bool operator!();
 
         // Operator for type casting
-        operator bool() const
-        {
-            if (get_type() == Bool)
-            {
-                return std::get<bool>(_value);
-            }
-            // TODO: Exception
-            return false;
-        }
-
-        operator int() const
-        {
-            if (get_type() == Integer)
-            {
-                return std::get<int>(_value);
-            }
-            // TODO: Exception
-            return 0;
-        }
-
-        operator double() const
-        {
-            if (get_type() == Double)
-            {
-                return std::get<double>(_value);
-            }
-            // TODO: Exception
-            return 0.d;
-        }
-
-        operator std::string() const
-        {
-            if (get_type() == String)
-            {
-                return std::get<std::string>(_value);
-            }
-            // TODO: Exception
-            return std::string("");
-        }
+        operator bool() const;
+        operator int() const;
+        operator double() const;
+        operator std::string() const;
     };
 };
 

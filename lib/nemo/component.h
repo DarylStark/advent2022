@@ -10,7 +10,7 @@ namespace nemo
         std::string _name;
 
     public:
-        Component(const std::string &name) : _name(name) {}
+        Component(const std::string &name);
         virtual void setup() = 0;
         virtual void loop() = 0;
     };

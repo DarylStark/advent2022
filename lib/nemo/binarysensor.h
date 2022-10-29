@@ -21,24 +21,9 @@ namespace nemo
         input_type __type;
 
     public:
-        BinarySensor(const std::string &name, uint8_t gpio, input_type type = Normal)
-            : Component(name), __gpio(gpio), __type(type)
-        {
-        }
-
-        void setup() override
-        {
-            // Configure the GPIO
-            pinMode(__gpio, __type);
-
-            // Create the entities
-            NemoApp::entities[_name + ".sensor.low"] = digitalRead(__gpio) == LOW;
-        }
-
-        void loop() override
-        {
-            NemoApp::entities[_name + ".sensor.low"] = digitalRead(__gpio) == LOW;
-        }
+        BinarySensor(const std::string &name, uint8_t gpio, input_type type = Normal);
+        void setup() override;
+        void loop() override;
     };
 };
 
