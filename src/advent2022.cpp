@@ -119,6 +119,9 @@ void Advent2022::set_mood()
         lcd_text << std::string(spaces_after, ' ');
         lcd_text << " >";
         NemoApp::entities["lcd.display.line1"] = lcd_text.str();
+
+        // TODO:
+        // Set the lights to the correct color
     }
 }
 
