@@ -2,6 +2,7 @@
 #define __LIQUIDCRYSTAL_H__
 
 #include <sstream>
+#include <string>
 #include <LiquidCrystal_I2C.h>
 #include "nemoapp.h"
 #include "component.h"
@@ -17,7 +18,7 @@ namespace nemo
         LiquidCrystal_I2C __component;
 
     public:
-        LiquidCrystal(uint8_t address, uint8_t width, uint8_t height) : __address(address), __width(width), __height(height), __component(__address, __width, __height)
+        LiquidCrystal(const std::string &name, uint8_t address, uint8_t width, uint8_t height) : Component(name), __address(address), __width(width), __height(height), __component(__address, __width, __height)
         {
         }
 
@@ -35,7 +36,7 @@ namespace nemo
             {
                 // Create the entity name
                 std::stringstream name;
-                name << "display.line" << i;
+                name << _name + ".display.line" << i;
 
                 // Create the entity
                 NemoApp::entities[name.str()] = std::string();
@@ -47,8 +48,8 @@ namespace nemo
             }
 
             // Create entities for the backlight
-            NemoApp::entities["display.backlight"] = true;
-            NemoApp::entities["display.backlight"].subscribe(
+            NemoApp::entities[_name + ".display.backlight"] = true;
+            NemoApp::entities[_name + ".display.backlight"].subscribe(
                 "set_backlight",
                 {std::bind(&LiquidCrystal::set_backlight, this, std::placeholders::_1)});
         }
