@@ -7,6 +7,9 @@
 #include <functional>
 #include <vector>
 
+// C includes
+#include <time.h>
+
 // Nemo Includes
 #include <nemoapp.h>
 #include <liquidcrystal.h>
@@ -22,6 +25,13 @@ enum AppMode
     Setup = -1,
     MoodLighting = 0,
     Calendar = 1
+};
+
+struct Date
+{
+    uint16_t year;
+    uint16_t month;
+    uint16_t day;
 };
 
 class Advent2022 : public nemo::NemoApp
@@ -50,6 +60,9 @@ public:
     // Methods for the WiFi connection
     void reconnect_to_wifi();
     void update_ntp(bool force = false);
+
+    // Methods for the date
+    Date get_date();
 
     // Methods to switch between modes
     void configure_mode();

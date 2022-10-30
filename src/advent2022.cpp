@@ -44,7 +44,7 @@ void Advent2022::setup()
         {std::bind(&Advent2022::set_mood, this)});
 
     // Set the startmode 'moodlighting'
-    NemoApp::entities["advent.mode"] = AppMode::MoodLighting;
+    NemoApp::entities["advent.mode"] = AppMode::Calendar;
     NemoApp::entities["advent.mood_current"] = 0;
 }
 
@@ -83,16 +83,31 @@ void Advent2022::update_ntp(bool force /* = false */)
 {
     if (millis() - __ntp_last_update >= (30 * 60 * 1000) || force)
     {
-        Serial.println("Updating time");
         __ntp_client.update();
         __ntp_last_update = millis();
-        Serial.println(__ntp_client.getFormattedTime());
     }
+}
+
+Date Advent2022::get_date()
+{
+    // Convert the Epoch Time to a `tm` struct. This is a bit of C-code, but
+    // i cannot find the correct way to do it in C++.
+    long time = __ntp_client.getEpochTime();
+    tm *x = localtime(&time);
+
+    // Create the Date object
+    Date d;
+    d.year = x->tm_year + 1900;
+    d.month = x->tm_mon + 1;
+    d.day = x->tm_mday;
+
+    // Return the created object
+    return d;
 }
 
 void Advent2022::configure_mode()
 {
-    const nemo::Entity &mode = NemoApp::entities["advent.mode"];
+    nemo::Entity &mode = NemoApp::entities["advent.mode"];
 
     if (static_cast<int>(mode) == AppMode::MoodLighting)
     {
@@ -110,6 +125,17 @@ void Advent2022::configure_mode()
 
     if (static_cast<int>(mode) == AppMode::Calendar)
     {
+        // Check if it is time yet to start the calendar
+        Date now = get_date();
+        if (now.year != 2022 || now.month != 12)
+        {
+            NemoApp::entities["lcd.display.line0"] = std::string("Het is nog geen");
+            NemoApp::entities["lcd.display.line1"] = std::string("december!");
+            delay(5000);
+            mode = AppMode::MoodLighting;
+            return;
+        }
+
         // Unsubscribe from the events of the calendar mode
         NemoApp::entities["next.sensor.low"].unsubscribe_all();
         NemoApp::entities["previous.sensor.low"].unsubscribe_all();
