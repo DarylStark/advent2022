@@ -14,6 +14,8 @@
 
 // Arduino includes
 #include <WiFi.h>
+#include <WiFiUdp.h>
+#include <NTPClient.h>
 
 enum AppMode
 {
@@ -27,6 +29,11 @@ class Advent2022 : public nemo::NemoApp
 private:
     // The LCD screen
     nemo::LiquidCrystal __display;
+
+    // Objects for NTP
+    WiFiUDP __udp;
+    NTPClient __ntp_client;
+    unsigned long __ntp_last_update;
 
     // The buttons
     nemo::BinarySensor __next;
@@ -42,6 +49,7 @@ public:
 
     // Methods for the WiFi connection
     void reconnect_to_wifi();
+    void update_ntp(bool force = false);
 
     // Methods to switch between modes
     void configure_mode();

@@ -1,6 +1,7 @@
 #include "advent2022.h"
 
-Advent2022::Advent2022() : __display("lcd", 0x27, 16, 2), __next("next", 19, nemo::input_type::Pullup), __previous("previous", 18, nemo::input_type::Pullup)
+Advent2022::Advent2022()
+    : __display("lcd", 0x27, 16, 2), __next("next", 19, nemo::input_type::Pullup), __previous("previous", 18, nemo::input_type::Pullup), __ntp_client(__udp)
 {
     register_component(__display);
     register_component(__next);
@@ -12,6 +13,11 @@ void Advent2022::setup()
     // The `_setup` method of the base class will make sure all components
     // are "set-up"
     _setup();
+
+    // Start the time client
+    __ntp_client.begin();
+    __ntp_client.setTimeOffset(3600);
+    update_ntp(true);
 
     // Create entities for the app
     NemoApp::entities["advent.mode"] = AppMode::Setup;
@@ -51,6 +57,9 @@ void Advent2022::loop()
     // Make sure WiFi is still connected
     reconnect_to_wifi();
 
+    // Update the time
+    update_ntp();
+
     // Delay :)
     delay(50);
 }
@@ -67,6 +76,17 @@ void Advent2022::reconnect_to_wifi()
         {
             delay(100);
         }
+    }
+}
+
+void Advent2022::update_ntp(bool force /* = false */)
+{
+    if (millis() - __ntp_last_update >= (30 * 60 * 1000) || force)
+    {
+        Serial.println("Updating time");
+        __ntp_client.update();
+        __ntp_last_update = millis();
+        Serial.println(__ntp_client.getFormattedTime());
     }
 }
 
