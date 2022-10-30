@@ -43,7 +43,7 @@ void WiFiConnect::setup()
 
     // Configure the webserver
     __web_server.on("/", std::bind(&WiFiConnect::__webserver_mainpage, this));
-    __web_server.on("/save", std::bind(&WiFiConnect::__webserver_save, this));
+    __web_server.on("/save", HTTP_POST, std::bind(&WiFiConnect::__webserver_save, this));
 
     // Start the webserver
     __web_server.begin();
@@ -90,13 +90,6 @@ void WiFiConnect::__set_screen_text(const nemo::EntityEvent &e)
 
     if (static_cast<int>(e.entity) == 4)
     {
-        NemoApp::entities["lcd.display.line0"] = std::string("Controleren ....");
-        NemoApp::entities["lcd.display.line1"] = std::string("");
-        return;
-    }
-
-    if (static_cast<int>(e.entity) == 5)
-    {
         NemoApp::entities["lcd.display.line0"] = std::string("    Gelukt !");
 
         for (uint16_t i = 3; i > 0; i--)
@@ -125,13 +118,28 @@ void WiFiConnect::__webserver_mainpage()
 
     // Create the page to return
     std::stringstream page;
-    page << "<html>\n<head>\n<title>Advent Kalender 2022</title>\n</head>\n";
-    page << "<body>\n";
-    page << "<div style='text-align: center;'>";
-    page << "<h1>Advent Kalender 2022</h1>\n";
+    page << "<html>";
+    page << "<head>";
+    page << "<title>Advent Kalender 2022</title>";
+    page << "<meta name='viewport' content='width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no'>";
+    page << "<style type='text/css'>";
+    page << "body { background-color: #2e5214; color: #000; font-family: arial,sans-serif; font-size: 14px;; }";
+    page << "div { box-sizing: border-box; padding: 20px; max-width: 100%; width: 520px; margin: auto; background-color: #fff; text-align: center; }";
+    page << "</style>";
+    page << "</head>";
+    page << "<body>";
+    page << "<div>";
+    page << "<h1>Advent Kalender 2022</h1>";
+    page << "<form action='/save' method='post'>";
+    page << "<p><b>SSID</b></p>";
+    page << "<p><input type='text' name='ssid' /></p>";
+    page << "<p><b>Wachtwoord</b></p>";
+    page << "<p><input type='password' name='password' /></p>";
+    page << "<p><input type='submit' value='Opslaan' /></p>";
+    page << "</form>";
     page << "</div>";
-    page << "</body>\n";
-    page << "</html>\n";
+    page << "</body>";
+    page << "</html>";
 
     // Return the page
     __web_server.send(200, "text/html", String(page.str().c_str()));
@@ -139,12 +147,40 @@ void WiFiConnect::__webserver_mainpage()
 
 void WiFiConnect::__webserver_save()
 {
-    // TODO: Implement
+    // Get the fields. We retrieve these as Arduio-Strings because the method
+    // for the `preferences` library that saves the strings expects a Arduino
+    // String. If we convert it to a STL string, we have to revert it later on
+    // which is not efficient.
+    String ssid(__web_server.arg("ssid"));
+    String password(__web_server.arg("password"));
 
-    // This is just testcode!
+    // Save the settings
+    __preferences.begin("wifi", false);
+    __preferences.putString("ssid", ssid);
+    __preferences.putString("password", password);
+
+    // Create the page to return
+    std::stringstream page;
+    page << "<html>";
+    page << "<head>";
+    page << "<title>Advent Kalender 2022</title>";
+    page << "<meta name='viewport' content='width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no'>";
+    page << "<style type='text/css'>";
+    page << "body { background-color: #2e5214; color: #000; font-family: arial,sans-serif; font-size: 14px;; }";
+    page << "div { box-sizing: border-box; padding: 20px; max-width: 100%; width: 520px; margin: auto; background-color: #fff; text-align: center; }";
+    page << "</style>";
+    page << "</head>";
+    page << "<body>";
+    page << "<div>";
+    page << "<h1>Advent Kalender 2022</h1>";
+    page << "<p>Gelukt!</p>";
+    page << "</div>";
+    page << "</body>";
+    page << "</html>";
+
+    // Return the page
+    __web_server.send(200, "text/html", String(page.str().c_str()));
+
+    // Reboot!
     NemoApp::entities["wificonnect.connected_client"] = 4;
-    delay(2000);
-    NemoApp::entities["wificonnect.connected_client"] = 5;
-
-    __web_server.send(200, "text/html", "Done");
 }

@@ -48,8 +48,26 @@ void Advent2022::loop()
     // are "looped"
     _loop();
 
+    // Make sure WiFi is still connected
+    reconnect_to_wifi();
+
     // Delay :)
     delay(50);
+}
+
+void Advent2022::reconnect_to_wifi()
+{
+    if (WiFi.status() != WL_CONNECTED)
+    {
+        Serial.println("Disconnected");
+        WiFi.reconnect();
+        unsigned long start = millis();
+        unsigned long end = start + (10 * 1000); // 10s timeout
+        while (WiFi.status() != WL_CONNECTED && millis() < end)
+        {
+            delay(100);
+        }
+    }
 }
 
 void Advent2022::configure_mode()

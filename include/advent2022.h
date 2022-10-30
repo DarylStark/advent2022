@@ -12,6 +12,9 @@
 #include <liquidcrystal.h>
 #include <binarysensor.h>
 
+// Arduino includes
+#include <WiFi.h>
+
 enum AppMode
 {
     Setup = -1,
@@ -36,6 +39,9 @@ public:
     Advent2022();
     void setup() override;
     void loop() override;
+
+    // Methods for the WiFi connection
+    void reconnect_to_wifi();
 
     // Methods to switch between modes
     void configure_mode();

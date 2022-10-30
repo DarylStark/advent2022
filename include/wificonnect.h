@@ -8,6 +8,7 @@
 // Arduino includes
 #include <WiFi.h>
 #include <WebServer.h>
+#include <Preferences.h>
 
 // Nemo Includes
 #include <nemoapp.h>
@@ -18,6 +19,9 @@ class WiFiConnect : public nemo::NemoApp
 private:
     // The LCD screen
     nemo::LiquidCrystal __display;
+
+    // Saving of settings
+    Preferences __preferences;
 
     // Web Server
     WebServer __web_server;
