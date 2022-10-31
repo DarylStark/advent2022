@@ -68,7 +68,6 @@ void Advent2022::reconnect_to_wifi()
 {
     if (WiFi.status() != WL_CONNECTED)
     {
-        Serial.println("Disconnected");
         WiFi.reconnect();
         unsigned long start = millis();
         unsigned long end = start + (10 * 1000); // 10s timeout
