@@ -24,6 +24,7 @@ namespace viridi
 
         public:
             BinarySensor(const std::string &name, uint8_t gpio, input_type type = Normal);
+            ~BinarySensor();
             void setup() override;
             void loop() override;
         };

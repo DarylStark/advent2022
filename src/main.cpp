@@ -63,11 +63,6 @@ void setup()
                 delay(3000);
             }
         }
-
-        // TODO: This should be done automatically
-        viridi::entity_manager::entities["lcd.display.backlight"].unsubscribe_all();
-        viridi::entity_manager::entities["lcd.display.line0"].unsubscribe_all();
-        viridi::entity_manager::entities["lcd.display.line1"].unsubscribe_all();
     }
 
     if (wifi_configured)

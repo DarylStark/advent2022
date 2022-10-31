@@ -9,6 +9,12 @@ namespace viridi
         {
         }
 
+        BinarySensor::~BinarySensor()
+        {
+            // Remove all created entities
+            entity_manager::entities.erase(_name + ".sensor.low");
+        }
+
         void BinarySensor::setup()
         {
             // Configure the GPIO

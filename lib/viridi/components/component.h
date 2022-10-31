@@ -16,11 +16,6 @@ namespace viridi
             Component(const std::string &name);
             virtual void setup() = 0;
             virtual void loop() = 0;
-
-            // Important TODO:
-            // Make sure there is a method to unsubscribe from all the created
-            // entities and to delete the created entities once this element
-            // gets out of scope.
         };
     };
 };

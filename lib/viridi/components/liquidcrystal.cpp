@@ -9,6 +9,22 @@ namespace viridi
         {
         }
 
+        LiquidCrystal::~LiquidCrystal()
+        {
+            for (int i = 0; i < __height; i++)
+            {
+                // Create the entity name
+                std::stringstream name;
+                name << _name + ".display.line" << i;
+
+                // Delete the entity
+                entity_manager::entities.erase(name.str());
+            }
+
+            // Remove all created entities
+            entity_manager::entities.erase(_name + ".display.backlight");
+        }
+
         void LiquidCrystal::setup()
         {
             // Initialize the component

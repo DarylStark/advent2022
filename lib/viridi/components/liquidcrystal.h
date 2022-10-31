@@ -21,6 +21,7 @@ namespace viridi
 
         public:
             LiquidCrystal(const std::string &name, uint8_t address, uint8_t width, uint8_t height);
+            ~LiquidCrystal();
             void setup() override;
             void loop() override;
             void clear(int line = -1);
