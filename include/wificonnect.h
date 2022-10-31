@@ -10,15 +10,15 @@
 #include <WebServer.h>
 #include <Preferences.h>
 
-// Nemo Includes
-#include <nemoapp.h>
+// Viridi Includes
+#include <appbase.h>
 #include <liquidcrystal.h>
 
-class WiFiConnect : public nemo::NemoApp
+class WiFiConnect : public viridi::apps::AppBase
 {
 private:
     // The LCD screen
-    nemo::LiquidCrystal __display;
+    viridi::components::LiquidCrystal __display;
 
     // Saving of settings
     Preferences __preferences;
@@ -30,7 +30,7 @@ private:
     void __wifi_event(WiFiEvent_t event);
 
     // UI methods
-    void __set_screen_text(const nemo::EntityEvent &e);
+    void __set_screen_text(const viridi::entity_manager::EntityEvent &e);
 
     // WebServer methods
     void __webserver_mainpage();

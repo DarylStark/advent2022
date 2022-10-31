@@ -3,7 +3,7 @@
 
 // Arduino Includes
 #include <Arduino.h>
-#include <nemoapp.h>
+#include <appbase.h>
 
 // Include the apps
 #include "advent2022.h"
@@ -12,7 +12,7 @@
 #include <liquidcrystal.h>
 
 // Global objects for the app
-nemo::NemoApp *advent22;
+viridi::apps::AppBase *advent22;
 
 // Arduino needed methods
 void setup()
@@ -27,7 +27,7 @@ void setup()
     // block to make sure all variabled are destroyed after this and won't
     // interfere with the application itself.
     {
-        nemo::LiquidCrystal display("lcd", 0x27, 16, 2);
+        viridi::components::LiquidCrystal display("lcd", 0x27, 16, 2);
         display.setup();
 
         Preferences preferences;
@@ -35,8 +35,8 @@ void setup()
         String ssid = preferences.getString("ssid");
         String password = preferences.getString("password");
 
-        nemo::NemoApp::entities["lcd.display.line0"] = std::string("Verbinden met");
-        nemo::NemoApp::entities["lcd.display.line1"] = std::string(ssid.c_str());
+        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("Verbinden met");
+        viridi::apps::AppBase::entities["lcd.display.line1"] = std::string(ssid.c_str());
 
         if (ssid != "")
         {
@@ -52,22 +52,22 @@ void setup()
             wifi_configured = WiFi.isConnected();
             if (!wifi_configured)
             {
-                nemo::NemoApp::entities["lcd.display.line0"] = std::string("   Verbinden");
-                nemo::NemoApp::entities["lcd.display.line1"] = std::string("    mislukt");
+                viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("   Verbinden");
+                viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("    mislukt");
                 delay(3000);
             }
             else
             {
-                nemo::NemoApp::entities["lcd.display.line0"] = std::string("   Verbonden!");
-                nemo::NemoApp::entities["lcd.display.line1"] = std::string("");
+                viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("   Verbonden!");
+                viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("");
                 delay(3000);
             }
         }
 
         // TODO: This should be done automatically
-        nemo::NemoApp::entities["lcd.display.backlight"].unsubscribe_all();
-        nemo::NemoApp::entities["lcd.display.line0"].unsubscribe_all();
-        nemo::NemoApp::entities["lcd.display.line1"].unsubscribe_all();
+        viridi::apps::AppBase::entities["lcd.display.backlight"].unsubscribe_all();
+        viridi::apps::AppBase::entities["lcd.display.line0"].unsubscribe_all();
+        viridi::apps::AppBase::entities["lcd.display.line1"].unsubscribe_all();
     }
 
     if (wifi_configured)

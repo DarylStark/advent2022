@@ -1,7 +1,7 @@
 #include "advent2022.h"
 
 Advent2022::Advent2022()
-    : __display("lcd", 0x27, 16, 2), __next("next", 19, nemo::input_type::Pullup), __previous("previous", 18, nemo::input_type::Pullup), __ntp_client(__udp)
+    : __display("lcd", 0x27, 16, 2), __next("next", 19, viridi::components::input_type::Pullup), __previous("previous", 18, viridi::components::input_type::Pullup), __ntp_client(__udp)
 {
     register_component(__display);
     register_component(__next);
@@ -20,14 +20,14 @@ void Advent2022::setup()
     update_ntp(true);
 
     // Create entities for the app
-    NemoApp::entities["advent.mode"] = AppMode::Setup;
+    viridi::apps::AppBase::entities["advent.mode"] = AppMode::Setup;
 
     // Create entities for the mood lighting
-    NemoApp::entities["advent.mood_current"] = -1;
+    viridi::apps::AppBase::entities["advent.mood_current"] = -1;
 
     // Create entities for the calendar
-    NemoApp::entities["advent.calendar_selected"] = 0;
-    NemoApp::entities["advent.calendar_turn"] = 0;
+    viridi::apps::AppBase::entities["advent.calendar_selected"] = 0;
+    viridi::apps::AppBase::entities["advent.calendar_turn"] = 0;
 
     // Create the moods
     __moodlightings.reserve(3);
@@ -36,16 +36,16 @@ void Advent2022::setup()
     __moodlightings.push_back("Full");
 
     // Add listeners to the mode-entities
-    NemoApp::entities["advent.mode"].subscribe(
+    viridi::apps::AppBase::entities["advent.mode"].subscribe(
         "update_mood",
         {std::bind(&Advent2022::configure_mode, this)});
-    NemoApp::entities["advent.mood_current"].subscribe(
+    viridi::apps::AppBase::entities["advent.mood_current"].subscribe(
         "update_mood_current",
         {std::bind(&Advent2022::set_mood, this)});
 
     // Set the startmode 'moodlighting'
-    NemoApp::entities["advent.mode"] = AppMode::Calendar;
-    NemoApp::entities["advent.mood_current"] = 0;
+    viridi::apps::AppBase::entities["advent.mode"] = AppMode::MoodLighting;
+    viridi::apps::AppBase::entities["advent.mood_current"] = 0;
 }
 
 void Advent2022::loop()
@@ -107,19 +107,19 @@ Date Advent2022::get_date()
 
 void Advent2022::configure_mode()
 {
-    nemo::Entity &mode = NemoApp::entities["advent.mode"];
+    viridi::entity_manager::Entity &mode = viridi::apps::AppBase::entities["advent.mode"];
 
     if (static_cast<int>(mode) == AppMode::MoodLighting)
     {
         // Unsubscribe from the events of the calendar mode
-        NemoApp::entities["next.sensor.low"].unsubscribe_all();
-        NemoApp::entities["previous.sensor.low"].unsubscribe_all();
+        viridi::apps::AppBase::entities["next.sensor.low"].unsubscribe_all();
+        viridi::apps::AppBase::entities["previous.sensor.low"].unsubscribe_all();
 
-        NemoApp::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_mood, this, std::placeholders::_1)});
-        NemoApp::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_mood, this, std::placeholders::_1)});
+        viridi::apps::AppBase::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_mood, this, std::placeholders::_1)});
+        viridi::apps::AppBase::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_mood, this, std::placeholders::_1)});
 
-        NemoApp::entities["lcd.display.line0"] = std::string("Sfeerverlichting");
-        NemoApp::entities["lcd.display.line1"] = std::string("");
+        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("Sfeerverlichting");
+        viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("");
         return;
     }
 
@@ -129,22 +129,22 @@ void Advent2022::configure_mode()
         Date now = get_date();
         if (now.year != 2022 || now.month != 12)
         {
-            NemoApp::entities["lcd.display.line0"] = std::string("Het is nog geen");
-            NemoApp::entities["lcd.display.line1"] = std::string("december!");
+            viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("Het is nog geen");
+            viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("december!");
             delay(5000);
             mode = AppMode::MoodLighting;
             return;
         }
 
         // Unsubscribe from the events of the calendar mode
-        NemoApp::entities["next.sensor.low"].unsubscribe_all();
-        NemoApp::entities["previous.sensor.low"].unsubscribe_all();
+        viridi::apps::AppBase::entities["next.sensor.low"].unsubscribe_all();
+        viridi::apps::AppBase::entities["previous.sensor.low"].unsubscribe_all();
 
-        NemoApp::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_index, this, std::placeholders::_1)});
-        NemoApp::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_index, this, std::placeholders::_1)});
+        viridi::apps::AppBase::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_index, this, std::placeholders::_1)});
+        viridi::apps::AppBase::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_index, this, std::placeholders::_1)});
 
-        NemoApp::entities["lcd.display.line0"] = std::string("Kies  een  vakje");
-        NemoApp::entities["lcd.display.line1"] = std::string("en druk  [ENTER]");
+        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("Kies  een  vakje");
+        viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("en druk  [ENTER]");
 
         return;
     }
@@ -152,9 +152,9 @@ void Advent2022::configure_mode()
 
 void Advent2022::set_mood()
 {
-    if (static_cast<int>(NemoApp::entities["advent.mode"]) == AppMode::MoodLighting)
+    if (static_cast<int>(viridi::apps::AppBase::entities["advent.mode"]) == AppMode::MoodLighting)
     {
-        nemo::Entity &mood_current = NemoApp::entities["advent.mood_current"];
+        viridi::entity_manager::Entity &mood_current = viridi::apps::AppBase::entities["advent.mood_current"];
 
         // Sanity checks
         if (static_cast<int>(mood_current) < 0)
@@ -182,33 +182,33 @@ void Advent2022::set_mood()
         lcd_text << name;
         lcd_text << std::string(spaces_after, ' ');
         lcd_text << " >";
-        NemoApp::entities["lcd.display.line1"] = lcd_text.str();
+        viridi::apps::AppBase::entities["lcd.display.line1"] = lcd_text.str();
 
         // TODO:
         // Set the lights to the correct color
     }
 }
 
-void Advent2022::next_mood(const nemo::EntityEvent &e)
+void Advent2022::next_mood(const viridi::entity_manager::EntityEvent &e)
 {
     if (e.entity)
-        NemoApp::entities["advent.mood_current"]++;
+        viridi::apps::AppBase::entities["advent.mood_current"]++;
 }
 
-void Advent2022::previous_mood(const nemo::EntityEvent &e)
+void Advent2022::previous_mood(const viridi::entity_manager::EntityEvent &e)
 {
     if (e.entity)
-        NemoApp::entities["advent.mood_current"]--;
+        viridi::apps::AppBase::entities["advent.mood_current"]--;
 }
 
-void Advent2022::next_index(const nemo::EntityEvent &e)
+void Advent2022::next_index(const viridi::entity_manager::EntityEvent &e)
 {
     if (e.entity)
-        NemoApp::entities["advent.calendar_turn"]++;
+        viridi::apps::AppBase::entities["advent.calendar_turn"]++;
 }
 
-void Advent2022::previous_index(const nemo::EntityEvent &e)
+void Advent2022::previous_index(const viridi::entity_manager::EntityEvent &e)
 {
     if (e.entity)
-        NemoApp::entities["advent.calendar_turn"]--;
+        viridi::apps::AppBase::entities["advent.calendar_turn"]--;
 }

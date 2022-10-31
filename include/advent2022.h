@@ -10,8 +10,8 @@
 // C includes
 #include <time.h>
 
-// Nemo Includes
-#include <nemoapp.h>
+// Viridi includes
+#include <appbase.h>
 #include <liquidcrystal.h>
 #include <binarysensor.h>
 
@@ -34,11 +34,11 @@ struct Date
     uint16_t day;
 };
 
-class Advent2022 : public nemo::NemoApp
+class Advent2022 : public viridi::apps::AppBase
 {
 private:
     // The LCD screen
-    nemo::LiquidCrystal __display;
+    viridi::components::LiquidCrystal __display;
 
     // Objects for NTP
     WiFiUDP __udp;
@@ -46,8 +46,8 @@ private:
     unsigned long __ntp_last_update;
 
     // The buttons
-    nemo::BinarySensor __next;
-    nemo::BinarySensor __previous;
+    viridi::components::BinarySensor __next;
+    viridi::components::BinarySensor __previous;
 
     // Objects foor the 'moodlighting'
     std::vector<std::string> __moodlightings;
@@ -69,12 +69,12 @@ public:
     void set_mood();
 
     // Methods for the 'moodlighting' mode
-    void next_mood(const nemo::EntityEvent &e);
-    void previous_mood(const nemo::EntityEvent &e);
+    void next_mood(const viridi::entity_manager::EntityEvent &e);
+    void previous_mood(const viridi::entity_manager::EntityEvent &e);
 
     // Methods for the 'calendar' mode
-    void next_index(const nemo::EntityEvent &e);
-    void previous_index(const nemo::EntityEvent &e);
+    void next_index(const viridi::entity_manager::EntityEvent &e);
+    void previous_index(const viridi::entity_manager::EntityEvent &e);
 };
 
 #endif // __ADVENT2022_H__
