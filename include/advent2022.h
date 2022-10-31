@@ -11,9 +11,9 @@
 #include <time.h>
 
 // Viridi includes
-#include <appbase.h>
-#include <liquidcrystal.h>
-#include <binarysensor.h>
+#include <apps/appbase.h>
+#include <components/liquidcrystal.h>
+#include <components/binarysensor.h>
 
 // Arduino includes
 #include <WiFi.h>

@@ -11,8 +11,8 @@
 #include <Preferences.h>
 
 // Viridi Includes
-#include <appbase.h>
-#include <liquidcrystal.h>
+#include <apps/appbase.h>
+#include <components/liquidcrystal.h>
 
 class WiFiConnect : public viridi::apps::AppBase
 {

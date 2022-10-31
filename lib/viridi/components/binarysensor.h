@@ -2,8 +2,8 @@
 #define __BINARYSENSOR_H__
 
 #include <Arduino.h>
-#include "appbase.h"
-#include "component.h"
+#include "apps/appbase.h"
+#include "components/component.h"
 
 namespace viridi
 {

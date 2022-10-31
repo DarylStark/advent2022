@@ -1,4 +1,4 @@
-#include "liquidcrystal.h"
+#include "components/liquidcrystal.h"
 
 namespace viridi
 {

@@ -3,13 +3,13 @@
 
 // Arduino Includes
 #include <Arduino.h>
-#include <appbase.h>
+#include <apps/appbase.h>
 
 // Include the apps
 #include "advent2022.h"
 #include "wificonnect.h"
 
-#include <liquidcrystal.h>
+#include <components/liquidcrystal.h>
 
 // Global objects for the app
 viridi::apps::AppBase *advent22;

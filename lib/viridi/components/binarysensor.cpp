@@ -1,4 +1,4 @@
-#include "binarysensor.h"
+#include "components/binarysensor.h"
 
 namespace viridi
 {

@@ -1,4 +1,4 @@
-#include "entity.h"
+#include "entity_manager/entity.h"
 
 namespace viridi
 {

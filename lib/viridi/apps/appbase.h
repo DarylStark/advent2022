@@ -2,8 +2,8 @@
 #define __APP_H__
 
 #include <list>
-#include "component.h"
-#include "entity.h"
+#include "components/component.h"
+#include "entity_manager/entity.h"
 
 namespace viridi
 {
