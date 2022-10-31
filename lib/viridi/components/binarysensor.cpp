@@ -15,12 +15,12 @@ namespace viridi
             pinMode(__gpio, __type);
 
             // Create the entities
-            apps::AppBase::entities[_name + ".sensor.low"] = digitalRead(__gpio) == LOW;
+            entity_manager::entities[_name + ".sensor.low"] = digitalRead(__gpio) == LOW;
         }
 
         void BinarySensor::loop()
         {
-            apps::AppBase::entities[_name + ".sensor.low"] = digitalRead(__gpio) == LOW;
+            entity_manager::entities[_name + ".sensor.low"] = digitalRead(__gpio) == LOW;
         }
     };
 };

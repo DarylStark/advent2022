@@ -7,6 +7,7 @@
 #include <variant>
 #include <thread>
 #include <exception>
+#include <map>
 
 namespace viridi
 {
@@ -97,6 +98,9 @@ namespace viridi
             operator double() const;
             operator std::string() const;
         };
+
+        // Export a global object for entities
+        extern std::unordered_map<std::string, Entity> entities;
     };
 };
 

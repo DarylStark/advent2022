@@ -20,14 +20,14 @@ void Advent2022::setup()
     update_ntp(true);
 
     // Create entities for the app
-    viridi::apps::AppBase::entities["advent.mode"] = AppMode::Setup;
+    viridi::entity_manager::entities["advent.mode"] = AppMode::Setup;
 
     // Create entities for the mood lighting
-    viridi::apps::AppBase::entities["advent.mood_current"] = -1;
+    viridi::entity_manager::entities["advent.mood_current"] = -1;
 
     // Create entities for the calendar
-    viridi::apps::AppBase::entities["advent.calendar_selected"] = 0;
-    viridi::apps::AppBase::entities["advent.calendar_turn"] = 0;
+    viridi::entity_manager::entities["advent.calendar_selected"] = 0;
+    viridi::entity_manager::entities["advent.calendar_turn"] = 0;
 
     // Create the moods
     __moodlightings.reserve(3);
@@ -36,16 +36,16 @@ void Advent2022::setup()
     __moodlightings.push_back("Full");
 
     // Add listeners to the mode-entities
-    viridi::apps::AppBase::entities["advent.mode"].subscribe(
+    viridi::entity_manager::entities["advent.mode"].subscribe(
         "update_mood",
         {std::bind(&Advent2022::configure_mode, this)});
-    viridi::apps::AppBase::entities["advent.mood_current"].subscribe(
+    viridi::entity_manager::entities["advent.mood_current"].subscribe(
         "update_mood_current",
         {std::bind(&Advent2022::set_mood, this)});
 
     // Set the startmode 'moodlighting'
-    viridi::apps::AppBase::entities["advent.mode"] = AppMode::MoodLighting;
-    viridi::apps::AppBase::entities["advent.mood_current"] = 0;
+    viridi::entity_manager::entities["advent.mode"] = AppMode::MoodLighting;
+    viridi::entity_manager::entities["advent.mood_current"] = 0;
 }
 
 void Advent2022::loop()
@@ -107,19 +107,19 @@ Date Advent2022::get_date()
 
 void Advent2022::configure_mode()
 {
-    viridi::entity_manager::Entity &mode = viridi::apps::AppBase::entities["advent.mode"];
+    viridi::entity_manager::Entity &mode = viridi::entity_manager::entities["advent.mode"];
 
     if (static_cast<int>(mode) == AppMode::MoodLighting)
     {
         // Unsubscribe from the events of the calendar mode
-        viridi::apps::AppBase::entities["next.sensor.low"].unsubscribe_all();
-        viridi::apps::AppBase::entities["previous.sensor.low"].unsubscribe_all();
+        viridi::entity_manager::entities["next.sensor.low"].unsubscribe_all();
+        viridi::entity_manager::entities["previous.sensor.low"].unsubscribe_all();
 
-        viridi::apps::AppBase::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_mood, this, std::placeholders::_1)});
-        viridi::apps::AppBase::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_mood, this, std::placeholders::_1)});
+        viridi::entity_manager::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_mood, this, std::placeholders::_1)});
+        viridi::entity_manager::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_mood, this, std::placeholders::_1)});
 
-        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("Sfeerverlichting");
-        viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("");
+        viridi::entity_manager::entities["lcd.display.line0"] = std::string("Sfeerverlichting");
+        viridi::entity_manager::entities["lcd.display.line1"] = std::string("");
         return;
     }
 
@@ -129,22 +129,22 @@ void Advent2022::configure_mode()
         Date now = get_date();
         if (now.year != 2022 || now.month != 12)
         {
-            viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("Het is nog geen");
-            viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("december!");
+            viridi::entity_manager::entities["lcd.display.line0"] = std::string("Het is nog geen");
+            viridi::entity_manager::entities["lcd.display.line1"] = std::string("december!");
             delay(5000);
             mode = AppMode::MoodLighting;
             return;
         }
 
         // Unsubscribe from the events of the calendar mode
-        viridi::apps::AppBase::entities["next.sensor.low"].unsubscribe_all();
-        viridi::apps::AppBase::entities["previous.sensor.low"].unsubscribe_all();
+        viridi::entity_manager::entities["next.sensor.low"].unsubscribe_all();
+        viridi::entity_manager::entities["previous.sensor.low"].unsubscribe_all();
 
-        viridi::apps::AppBase::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_index, this, std::placeholders::_1)});
-        viridi::apps::AppBase::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_index, this, std::placeholders::_1)});
+        viridi::entity_manager::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_index, this, std::placeholders::_1)});
+        viridi::entity_manager::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_index, this, std::placeholders::_1)});
 
-        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("Kies  een  vakje");
-        viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("en druk  [ENTER]");
+        viridi::entity_manager::entities["lcd.display.line0"] = std::string("Kies  een  vakje");
+        viridi::entity_manager::entities["lcd.display.line1"] = std::string("en druk  [ENTER]");
 
         return;
     }
@@ -152,9 +152,9 @@ void Advent2022::configure_mode()
 
 void Advent2022::set_mood()
 {
-    if (static_cast<int>(viridi::apps::AppBase::entities["advent.mode"]) == AppMode::MoodLighting)
+    if (static_cast<int>(viridi::entity_manager::entities["advent.mode"]) == AppMode::MoodLighting)
     {
-        viridi::entity_manager::Entity &mood_current = viridi::apps::AppBase::entities["advent.mood_current"];
+        viridi::entity_manager::Entity &mood_current = viridi::entity_manager::entities["advent.mood_current"];
 
         // Sanity checks
         if (static_cast<int>(mood_current) < 0)
@@ -182,7 +182,7 @@ void Advent2022::set_mood()
         lcd_text << name;
         lcd_text << std::string(spaces_after, ' ');
         lcd_text << " >";
-        viridi::apps::AppBase::entities["lcd.display.line1"] = lcd_text.str();
+        viridi::entity_manager::entities["lcd.display.line1"] = lcd_text.str();
 
         // TODO:
         // Set the lights to the correct color
@@ -192,23 +192,23 @@ void Advent2022::set_mood()
 void Advent2022::next_mood(const viridi::entity_manager::EntityEvent &e)
 {
     if (e.entity)
-        viridi::apps::AppBase::entities["advent.mood_current"]++;
+        viridi::entity_manager::entities["advent.mood_current"]++;
 }
 
 void Advent2022::previous_mood(const viridi::entity_manager::EntityEvent &e)
 {
     if (e.entity)
-        viridi::apps::AppBase::entities["advent.mood_current"]--;
+        viridi::entity_manager::entities["advent.mood_current"]--;
 }
 
 void Advent2022::next_index(const viridi::entity_manager::EntityEvent &e)
 {
     if (e.entity)
-        viridi::apps::AppBase::entities["advent.calendar_turn"]++;
+        viridi::entity_manager::entities["advent.calendar_turn"]++;
 }
 
 void Advent2022::previous_index(const viridi::entity_manager::EntityEvent &e)
 {
     if (e.entity)
-        viridi::apps::AppBase::entities["advent.calendar_turn"]--;
+        viridi::entity_manager::entities["advent.calendar_turn"]--;
 }

@@ -6,13 +6,13 @@ void WiFiConnect::__wifi_event(WiFiEvent_t event)
 {
     if (event == ARDUINO_EVENT_WIFI_AP_STACONNECTED)
     {
-        viridi::apps::AppBase::entities["wificonnect.connected_client"] = 2;
+        viridi::entity_manager::entities["wificonnect.connected_client"] = 2;
         return;
     }
 
     if (event == ARDUINO_EVENT_WIFI_AP_STADISCONNECTED)
     {
-        viridi::apps::AppBase::entities["wificonnect.connected_client"] = 1;
+        viridi::entity_manager::entities["wificonnect.connected_client"] = 1;
         return;
     }
 }
@@ -31,8 +31,8 @@ void WiFiConnect::setup()
     _setup();
 
     // Set local entities
-    viridi::apps::AppBase::entities["wificonnect.connected_client"] = 0;
-    viridi::apps::AppBase::entities["wificonnect.connected_client"].subscribe("update", {std::bind(&WiFiConnect::__set_screen_text, this, std::placeholders::_1)});
+    viridi::entity_manager::entities["wificonnect.connected_client"] = 0;
+    viridi::entity_manager::entities["wificonnect.connected_client"].subscribe("update", {std::bind(&WiFiConnect::__set_screen_text, this, std::placeholders::_1)});
 
     // Set up the webserver
 
@@ -49,7 +49,7 @@ void WiFiConnect::setup()
     __web_server.begin();
 
     // Set a message on the screen about connecting
-    viridi::apps::AppBase::entities["wificonnect.connected_client"] = 1;
+    viridi::entity_manager::entities["wificonnect.connected_client"] = 1;
 }
 
 void WiFiConnect::loop()
@@ -69,39 +69,39 @@ void WiFiConnect::__set_screen_text(const viridi::entity_manager::EntityEvent &e
 {
     if (static_cast<int>(e.entity) == 1)
     {
-        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("Verbind met WiFi");
-        viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("   Advent2022");
+        viridi::entity_manager::entities["lcd.display.line0"] = std::string("Verbind met WiFi");
+        viridi::entity_manager::entities["lcd.display.line1"] = std::string("   Advent2022");
         return;
     }
 
     if (static_cast<int>(e.entity) == 2)
     {
-        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string(" Navigeer naar");
-        viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("  192.168.4.1");
+        viridi::entity_manager::entities["lcd.display.line0"] = std::string(" Navigeer naar");
+        viridi::entity_manager::entities["lcd.display.line1"] = std::string("  192.168.4.1");
         return;
     }
 
     if (static_cast<int>(e.entity) == 3)
     {
-        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("  Vul je WiFi");
-        viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("  gegevens in");
+        viridi::entity_manager::entities["lcd.display.line0"] = std::string("  Vul je WiFi");
+        viridi::entity_manager::entities["lcd.display.line1"] = std::string("  gegevens in");
         return;
     }
 
     if (static_cast<int>(e.entity) == 4)
     {
-        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("    Gelukt !");
+        viridi::entity_manager::entities["lcd.display.line0"] = std::string("    Gelukt !");
 
         for (uint16_t i = 3; i > 0; i--)
         {
             std::stringstream s;
             s << "Herstarten in " << i << "s";
-            viridi::apps::AppBase::entities["lcd.display.line1"] = std::string(s.str());
+            viridi::entity_manager::entities["lcd.display.line1"] = std::string(s.str());
             delay(1000);
         }
 
-        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("  Rebooting...");
-        viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("");
+        viridi::entity_manager::entities["lcd.display.line0"] = std::string("  Rebooting...");
+        viridi::entity_manager::entities["lcd.display.line1"] = std::string("");
 
         delay(1000);
 
@@ -114,7 +114,7 @@ void WiFiConnect::__set_screen_text(const viridi::entity_manager::EntityEvent &e
 void WiFiConnect::__webserver_mainpage()
 {
     // Client connected
-    viridi::apps::AppBase::entities["wificonnect.connected_client"] = 3;
+    viridi::entity_manager::entities["wificonnect.connected_client"] = 3;
 
     // Create the page to return
     std::stringstream page;
@@ -182,5 +182,5 @@ void WiFiConnect::__webserver_save()
     __web_server.send(200, "text/html", String(page.str().c_str()));
 
     // Reboot!
-    viridi::apps::AppBase::entities["wificonnect.connected_client"] = 4;
+    viridi::entity_manager::entities["wificonnect.connected_client"] = 4;
 }

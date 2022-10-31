@@ -19,8 +19,6 @@ namespace viridi
             virtual void _loop();
 
         public:
-            static std::unordered_map<std::string, entity_manager::Entity> entities;
-
             // Methods to manage components
             void register_component(components::Component &component);
 

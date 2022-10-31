@@ -165,5 +165,8 @@ namespace viridi
             // TODO: Exception
             return std::string("");
         }
+
+        // Global objects
+        std::unordered_map<std::string, Entity> entities;
     };
 };

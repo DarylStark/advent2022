@@ -26,17 +26,17 @@ namespace viridi
                 name << _name + ".display.line" << i;
 
                 // Create the entity
-                apps::AppBase::entities[name.str()] = std::string();
+                entity_manager::entities[name.str()] = std::string();
 
                 // Subscribe to the entity
-                apps::AppBase::entities[name.str()].subscribe(
+                entity_manager::entities[name.str()].subscribe(
                     "set_text",
                     {std::bind(&LiquidCrystal::set_text, this, i, std::placeholders::_1)});
             }
 
             // Create entities for the backlight
-            apps::AppBase::entities[_name + ".display.backlight"] = true;
-            apps::AppBase::entities[_name + ".display.backlight"].subscribe(
+            entity_manager::entities[_name + ".display.backlight"] = true;
+            entity_manager::entities[_name + ".display.backlight"].subscribe(
                 "set_backlight",
                 {std::bind(&LiquidCrystal::set_backlight, this, std::placeholders::_1)});
         }

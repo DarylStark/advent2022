@@ -35,8 +35,8 @@ void setup()
         String ssid = preferences.getString("ssid");
         String password = preferences.getString("password");
 
-        viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("Verbinden met");
-        viridi::apps::AppBase::entities["lcd.display.line1"] = std::string(ssid.c_str());
+        viridi::entity_manager::entities["lcd.display.line0"] = std::string("Verbinden met");
+        viridi::entity_manager::entities["lcd.display.line1"] = std::string(ssid.c_str());
 
         if (ssid != "")
         {
@@ -52,22 +52,22 @@ void setup()
             wifi_configured = WiFi.isConnected();
             if (!wifi_configured)
             {
-                viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("   Verbinden");
-                viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("    mislukt");
+                viridi::entity_manager::entities["lcd.display.line0"] = std::string("   Verbinden");
+                viridi::entity_manager::entities["lcd.display.line1"] = std::string("    mislukt");
                 delay(3000);
             }
             else
             {
-                viridi::apps::AppBase::entities["lcd.display.line0"] = std::string("   Verbonden!");
-                viridi::apps::AppBase::entities["lcd.display.line1"] = std::string("");
+                viridi::entity_manager::entities["lcd.display.line0"] = std::string("   Verbonden!");
+                viridi::entity_manager::entities["lcd.display.line1"] = std::string("");
                 delay(3000);
             }
         }
 
         // TODO: This should be done automatically
-        viridi::apps::AppBase::entities["lcd.display.backlight"].unsubscribe_all();
-        viridi::apps::AppBase::entities["lcd.display.line0"].unsubscribe_all();
-        viridi::apps::AppBase::entities["lcd.display.line1"].unsubscribe_all();
+        viridi::entity_manager::entities["lcd.display.backlight"].unsubscribe_all();
+        viridi::entity_manager::entities["lcd.display.line0"].unsubscribe_all();
+        viridi::entity_manager::entities["lcd.display.line1"].unsubscribe_all();
     }
 
     if (wifi_configured)

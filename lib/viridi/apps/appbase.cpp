@@ -24,8 +24,5 @@ namespace viridi
         {
             __components.push_back(&component);
         }
-
-        // Initialize static variables
-        std::unordered_map<std::string, entity_manager::Entity> AppBase::entities;
     };
 };
