@@ -1,11 +1,12 @@
 #include "advent2022.h"
 
 Advent2022::Advent2022()
-    : __display("lcd", 0x27, 16, 2), __next("next", 19, viridi::components::input_type::Pullup), __previous("previous", 18, viridi::components::input_type::Pullup), __ntp_client(__udp)
+    : __display("lcd", 0x27, 16, 2), __next("next", 19, viridi::components::input_type::Pullup), __previous("previous", 18, viridi::components::input_type::Pullup), __ntp_client(__udp), __leds("leds", 5, 20)
 {
     register_component(__display);
     register_component(__next);
     register_component(__previous);
+    register_component(__leds);
 }
 
 void Advent2022::setup()

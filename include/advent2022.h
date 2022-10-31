@@ -14,6 +14,7 @@
 #include <apps/appbase.h>
 #include <components/liquidcrystal.h>
 #include <components/binarysensor.h>
+#include <components/ws2812b.h>
 
 // Arduino includes
 #include <WiFi.h>
@@ -48,6 +49,9 @@ private:
     // The buttons
     viridi::components::BinarySensor __next;
     viridi::components::BinarySensor __previous;
+
+    // LED strip
+    viridi::components::WS2812B __leds;
 
     // Objects foor the 'moodlighting'
     std::vector<std::string> __moodlightings;
