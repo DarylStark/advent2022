@@ -3,6 +3,7 @@
 
 #include <Adafruit_NeoPixel.h>
 #include "components/component.h"
+#include "entity_manager/entity.h"
 
 namespace viridi
 {
@@ -34,6 +35,7 @@ namespace viridi
             void loop() override;
 
             // LED strip methods
+            void fill(const viridi::entity_manager::EntityEvent &e);
             void clear();
             void show();
             void set_color(uint16_t start_led, uint16_t count, Color color, bool show = false);

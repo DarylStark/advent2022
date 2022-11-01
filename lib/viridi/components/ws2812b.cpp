@@ -23,6 +23,8 @@ namespace viridi
 
         WS2812B::~WS2812B()
         {
+            entity_manager::entities.erase(_name + ".color");
+            entity_manager::entities.erase(_name + ".filled");
         }
 
         void WS2812B::setup()
@@ -32,11 +34,29 @@ namespace viridi
             __component.begin();
             __component.updateLength(__length);
 
-            // TODO: register entities
+            // Register entities
+            entity_manager::entities[_name + ".color"] = 0x00000000;
+            entity_manager::entities[_name + ".filled"] = false;
+
+            // Add handlers to the entities
+            entity_manager::entities[_name + ".filled"].subscribe(
+                "fill",
+                {std::bind(&WS2812B::fill, this, std::placeholders::_1)});
         }
 
         void WS2812B::loop()
         {
+        }
+
+        void WS2812B::fill(const viridi::entity_manager::EntityEvent &e)
+        {
+            if (e.entity)
+            {
+                __component.fill(static_cast<int>(entity_manager::entities[_name + ".color"]));
+                show();
+                return;
+            }
+            clear();
         }
 
         void WS2812B::clear()
