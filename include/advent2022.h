@@ -35,6 +35,12 @@ struct Date
     uint16_t day;
 };
 
+struct Mood
+{
+    std::string name;
+    std::vector<uint16_t> leds;
+};
+
 class Advent2022 : public viridi::apps::AppBase
 {
 private:
@@ -56,7 +62,7 @@ private:
     viridi::components::WS2812B __leds;
 
     // Objects foor the 'moodlighting'
-    std::vector<std::string> __moodlightings;
+    std::vector<Mood> __moodlightings;
 
 public:
     Advent2022();

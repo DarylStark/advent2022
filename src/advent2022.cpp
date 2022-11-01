@@ -6,7 +6,7 @@ Advent2022::Advent2022()
       __previous("previous", 13, viridi::components::input_type::Pullup),
       __mode("mode", 19, viridi::components::input_type::Pullup),
       __enter("enter", 18, viridi::components::input_type::Pullup),
-      __leds("leds", 5, 150),
+      __leds("leds", 5, 20),
       __ntp_client(__udp)
 {
     register_component(__display);
@@ -39,9 +39,9 @@ void Advent2022::setup()
 
     // Create the moods
     __moodlightings.reserve(3);
-    __moodlightings.push_back("Off");
-    __moodlightings.push_back("Outline");
-    __moodlightings.push_back("Full");
+    __moodlightings.push_back({"Off", {}});
+    __moodlightings.push_back({"Outline", {0, 1, 18, 19}});
+    __moodlightings.push_back({"Full", {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}});
 
     // Add listeners to the mode-entities
     viridi::entity_manager::entities["advent.mode"].subscribe(
@@ -62,8 +62,8 @@ void Advent2022::setup()
     update_ntp(true);
 
     // Set the startmode 'moodlighting'
-    viridi::entity_manager::entities["advent.mode"] = AppMode::MoodLighting;
     viridi::entity_manager::entities["advent.mood_current"] = 0;
+    viridi::entity_manager::entities["advent.mode"] = AppMode::MoodLighting;
 }
 
 void Advent2022::loop()
@@ -233,7 +233,7 @@ void Advent2022::set_mood()
         }
 
         // Create the string for on the screen
-        const std::string &name = __moodlightings[static_cast<int>(mood_current)];
+        const std::string &name = __moodlightings[static_cast<int>(mood_current)].name;
         const uint16_t text_space = 12;
         uint16_t spaces_before = 6 - ((name.length() + 1) / 2);
         uint16_t spaces_after = text_space - name.length() - spaces_before;
@@ -247,8 +247,13 @@ void Advent2022::set_mood()
         lcd_text << " >";
         viridi::entity_manager::entities["lcd.display.line1"] = lcd_text.str();
 
-        // TODO:
         // Set the lights to the correct color
+        __leds.clear();
+        for (const uint16_t &led : __moodlightings[static_cast<int>(mood_current)].leds)
+        {
+            __leds.set_color(led, 1, {0x00, 0x33, 0x00});
+        }
+        __leds.show();
     }
 }
 

@@ -35,8 +35,8 @@ namespace viridi
             __component.updateLength(__length);
 
             // Register entities
-            entity_manager::entities[_name + ".color"] = 0x00000000;
             entity_manager::entities[_name + ".filled"] = false;
+            entity_manager::entities[_name + ".color"] = 0x00000000;
 
             // Add handlers to the entities
             entity_manager::entities[_name + ".filled"].subscribe(
