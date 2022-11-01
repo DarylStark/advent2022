@@ -1,12 +1,20 @@
 #include "advent2022.h"
 
 Advent2022::Advent2022()
-    : __display("lcd", 0x27, 16, 2), __next("next", 19, viridi::components::input_type::Pullup), __previous("previous", 18, viridi::components::input_type::Pullup), __ntp_client(__udp), __leds("leds", 5, 20)
+    : __display("lcd", 0x27, 16, 2),
+      __next("next", 4, viridi::components::input_type::Pullup),
+      __previous("previous", 13, viridi::components::input_type::Pullup),
+      __mode("mode", 19, viridi::components::input_type::Pullup),
+      __enter("enter", 18, viridi::components::input_type::Pullup),
+      __leds("leds", 5, 150),
+      __ntp_client(__udp)
 {
     register_component(__display);
     register_component(__next);
     register_component(__previous);
     register_component(__leds);
+    register_component(__mode);
+    register_component(__enter);
 }
 
 void Advent2022::setup()
@@ -18,7 +26,6 @@ void Advent2022::setup()
     // Start the time client
     __ntp_client.begin();
     __ntp_client.setTimeOffset(3600);
-    update_ntp(true);
 
     // Create entities for the app
     viridi::entity_manager::entities["advent.mode"] = AppMode::Setup;
@@ -44,6 +51,16 @@ void Advent2022::setup()
         "update_mood_current",
         {std::bind(&Advent2022::set_mood, this)});
 
+    // Listener to the mode-button
+    viridi::entity_manager::entities["mode.sensor.low"].subscribe(
+        "next_mode",
+        {std::bind(&Advent2022::next_mode_button, this, std::placeholders::_1)});
+
+    viridi::entity_manager::entities["lcd.display.line0"] = std::string("  Klok syncen");
+    viridi::entity_manager::entities["lcd.display.line1"] = std::string("");
+
+    update_ntp(true);
+
     // Set the startmode 'moodlighting'
     viridi::entity_manager::entities["advent.mode"] = AppMode::MoodLighting;
     viridi::entity_manager::entities["advent.mood_current"] = 0;
@@ -55,17 +72,14 @@ void Advent2022::loop()
     // are "looped"
     _loop();
 
-    // Make sure WiFi is still connected
-    reconnect_to_wifi();
-
     // Update the time
     update_ntp();
 
     // Delay :)
-    delay(50);
+    delay(100);
 }
 
-void Advent2022::reconnect_to_wifi()
+bool Advent2022::reconnect_to_wifi()
 {
     if (WiFi.status() != WL_CONNECTED)
     {
@@ -77,14 +91,40 @@ void Advent2022::reconnect_to_wifi()
             delay(100);
         }
     }
+    return WiFi.status() == WL_CONNECTED;
+}
+
+void Advent2022::disconnect_wifi()
+{
+    WiFi.disconnect();
 }
 
 void Advent2022::update_ntp(bool force /* = false */)
 {
-    if (millis() - __ntp_last_update >= (30 * 60 * 1000) || force)
+
+    if (millis() - __ntp_last_update >= (60 * 60 * 1000) || force)
     {
-        __ntp_client.update();
-        __ntp_last_update = millis();
+        if (reconnect_to_wifi())
+        {
+            // Update
+            __ntp_client.update();
+
+            // Wait 10s to get a valid time
+            unsigned long start = millis();
+            unsigned long end = start + (10 * 1000); // 10s timeout
+            while (__ntp_client.isTimeSet() && millis() < end)
+            {
+                delay(100);
+            }
+
+            // If we have the time, we disconnect. Otherwise we need it for the
+            // next iteration
+            if (__ntp_client.isTimeSet())
+            {
+                __ntp_last_update = millis();
+                disconnect_wifi();
+            }
+        }
     }
 }
 
@@ -105,6 +145,26 @@ Date Advent2022::get_date()
     return d;
 }
 
+void Advent2022::next_mode_button(const viridi::entity_manager::EntityEvent &e)
+{
+    if (e.entity)
+    {
+        viridi::entity_manager::Entity &mode = viridi::entity_manager::entities["advent.mode"];
+
+        if (static_cast<int>(mode) == AppMode::MoodLighting)
+        {
+            mode = AppMode::Calendar;
+            return;
+        }
+
+        if (static_cast<int>(mode) == AppMode::Calendar)
+        {
+            mode = AppMode::MoodLighting;
+            return;
+        }
+    }
+}
+
 void Advent2022::configure_mode()
 {
     viridi::entity_manager::Entity &mode = viridi::entity_manager::entities["advent.mode"];
@@ -120,6 +180,9 @@ void Advent2022::configure_mode()
 
         viridi::entity_manager::entities["lcd.display.line0"] = std::string("Sfeerverlichting");
         viridi::entity_manager::entities["lcd.display.line1"] = std::string("");
+
+        set_mood();
+
         return;
     }
 

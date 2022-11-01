@@ -49,6 +49,8 @@ private:
     // The buttons
     viridi::components::BinarySensor __next;
     viridi::components::BinarySensor __previous;
+    viridi::components::BinarySensor __mode;
+    viridi::components::BinarySensor __enter;
 
     // LED strip
     viridi::components::WS2812B __leds;
@@ -62,17 +64,19 @@ public:
     void loop() override;
 
     // Methods for the WiFi connection
-    void reconnect_to_wifi();
+    bool reconnect_to_wifi();
+    void disconnect_wifi();
     void update_ntp(bool force = false);
 
     // Methods for the date
     Date get_date();
 
     // Methods to switch between modes
+    void next_mode_button(const viridi::entity_manager::EntityEvent &e);
     void configure_mode();
-    void set_mood();
 
     // Methods for the 'moodlighting' mode
+    void set_mood();
     void next_mood(const viridi::entity_manager::EntityEvent &e);
     void previous_mood(const viridi::entity_manager::EntityEvent &e);
 
