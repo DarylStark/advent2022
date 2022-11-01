@@ -6,8 +6,6 @@
 #include <string>
 #include <variant>
 #include <thread>
-#include <exception>
-#include <map>
 
 namespace viridi
 {

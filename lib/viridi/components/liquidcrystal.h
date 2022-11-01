@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 #include <LiquidCrystal_I2C.h>
-#include "apps/appbase.h"
+#include "entity_manager/entity.h"
 #include "components/component.h"
 
 namespace viridi
