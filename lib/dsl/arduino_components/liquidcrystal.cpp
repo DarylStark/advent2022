@@ -1,8 +1,8 @@
-#include "components/liquidcrystal.h"
+#include "arduino_components/liquidcrystal.h"
 
-namespace viridi
+namespace dsl
 {
-    namespace components
+    namespace arduino_components
     {
         // Public methods for LiquidCrystal
         LiquidCrystal::LiquidCrystal(const std::string &name, uint8_t address, uint8_t width, uint8_t height) : Component(name), __address(address), __width(width), __height(height), __component(__address, __width, __height)
@@ -72,15 +72,15 @@ namespace viridi
             __component.print(std::string(__width, ' ').c_str());
         }
 
-        void LiquidCrystal::set_text(int line, const viridi::entity_manager::EntityEvent &e)
+        void LiquidCrystal::set_text(int line, const dsl::entity_manager::EntityEvent &e)
         {
-            const viridi::entity_manager::Entity &text = e.entity;
+            const dsl::entity_manager::Entity &text = e.entity;
             clear(line);
             __component.setCursor(0, line);
             __component.print(static_cast<std::string>(text).c_str());
         }
 
-        void LiquidCrystal::set_backlight(const viridi::entity_manager::EntityEvent &e)
+        void LiquidCrystal::set_backlight(const dsl::entity_manager::EntityEvent &e)
         {
             if (e.entity)
             {

@@ -1,8 +1,8 @@
-#include "apps/appbase.h"
+#include "arduino_apps/appbase.h"
 
-namespace viridi
+namespace dsl
 {
-    namespace apps
+    namespace arduino_apps
     {
         // Protected methods for AppBase
         void AppBase::_setup()
@@ -20,7 +20,7 @@ namespace viridi
         };
 
         // Public methods for AppBase
-        void AppBase::register_component(components::Component &component)
+        void AppBase::register_component(arduino_components::Component &component)
         {
             __components.push_back(&component);
         }

@@ -3,16 +3,16 @@
 
 // Arduino Includes
 #include <Arduino.h>
-#include <apps/appbase.h>
+#include <arduino_apps/appbase.h>
 
 // Include the apps
 #include "advent2022.h"
 #include "wificonnect.h"
 
-#include <components/liquidcrystal.h>
+#include <arduino_components/liquidcrystal.h>
 
 // Global objects for the app
-viridi::apps::AppBase *advent22;
+dsl::arduino_apps::AppBase *advent22;
 
 // Arduino needed methods
 void setup()
@@ -27,7 +27,7 @@ void setup()
     // block to make sure all variabled are destroyed after this and won't
     // interfere with the application itself.
     {
-        viridi::components::LiquidCrystal display("lcd", 0x27, 16, 2);
+        dsl::arduino_components::LiquidCrystal display("lcd", 0x27, 16, 2);
         display.setup();
 
         Preferences preferences;
@@ -35,8 +35,8 @@ void setup()
         String ssid = preferences.getString("ssid");
         String password = preferences.getString("password");
 
-        viridi::entity_manager::entities["lcd.display.line0"] = std::string("Verbinden met");
-        viridi::entity_manager::entities["lcd.display.line1"] = std::string(ssid.c_str());
+        dsl::entity_manager::entities["lcd.display.line0"] = std::string("Verbinden met");
+        dsl::entity_manager::entities["lcd.display.line1"] = std::string(ssid.c_str());
 
         if (ssid != "")
         {
@@ -52,14 +52,14 @@ void setup()
             wifi_configured = WiFi.isConnected();
             if (!wifi_configured)
             {
-                viridi::entity_manager::entities["lcd.display.line0"] = std::string("   Verbinden");
-                viridi::entity_manager::entities["lcd.display.line1"] = std::string("    mislukt");
+                dsl::entity_manager::entities["lcd.display.line0"] = std::string("   Verbinden");
+                dsl::entity_manager::entities["lcd.display.line1"] = std::string("    mislukt");
                 delay(3000);
             }
             else
             {
-                viridi::entity_manager::entities["lcd.display.line0"] = std::string("   Verbonden!");
-                viridi::entity_manager::entities["lcd.display.line1"] = std::string("");
+                dsl::entity_manager::entities["lcd.display.line0"] = std::string("   Verbonden!");
+                dsl::entity_manager::entities["lcd.display.line1"] = std::string("");
                 delay(3000);
             }
         }

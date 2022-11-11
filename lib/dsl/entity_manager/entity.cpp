@@ -1,6 +1,6 @@
 #include "entity_manager/entity.h"
 
-namespace viridi
+namespace dsl
 {
     namespace entity_manager
     {

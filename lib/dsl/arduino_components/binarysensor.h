@@ -3,11 +3,11 @@
 
 #include <Arduino.h>
 #include "entity_manager/entity.h"
-#include "components/component.h"
+#include "arduino_components/component.h"
 
-namespace viridi
+namespace dsl
 {
-    namespace components
+    namespace arduino_components
     {
         enum input_type
         {

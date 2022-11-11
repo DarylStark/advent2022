@@ -11,14 +11,14 @@
 #include <Preferences.h>
 
 // Viridi Includes
-#include <apps/appbase.h>
-#include <components/liquidcrystal.h>
+#include <arduino_apps/appbase.h>
+#include <arduino_components/liquidcrystal.h>
 
-class WiFiConnect : public viridi::apps::AppBase
+class WiFiConnect : public dsl::arduino_apps::AppBase
 {
 private:
     // The LCD screen
-    viridi::components::LiquidCrystal __display;
+    dsl::arduino_components::LiquidCrystal __display;
 
     // Saving of settings
     Preferences __preferences;
@@ -30,7 +30,7 @@ private:
     void __wifi_event(WiFiEvent_t event);
 
     // UI methods
-    void __set_screen_text(const viridi::entity_manager::EntityEvent &e);
+    void __set_screen_text(const dsl::entity_manager::EntityEvent &e);
 
     // WebServer methods
     void __webserver_mainpage();

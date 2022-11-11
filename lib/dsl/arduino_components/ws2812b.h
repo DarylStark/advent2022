@@ -2,12 +2,12 @@
 #define __WS2812B_H__
 
 #include <Adafruit_NeoPixel.h>
-#include "components/component.h"
+#include "arduino_components/component.h"
 #include "entity_manager/entity.h"
 
-namespace viridi
+namespace dsl
 {
-    namespace components
+    namespace arduino_components
     {
         // Class for colors
         class Color
@@ -35,7 +35,7 @@ namespace viridi
             void loop() override;
 
             // LED strip methods
-            void fill(const viridi::entity_manager::EntityEvent &e);
+            void fill(const dsl::entity_manager::EntityEvent &e);
             void clear();
             void show();
             void set_color(uint16_t start_led, uint16_t count, Color color, bool show = false);

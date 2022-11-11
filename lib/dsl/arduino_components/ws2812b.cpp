@@ -1,8 +1,8 @@
-#include "components/ws2812b.h"
+#include "arduino_components/ws2812b.h"
 
-namespace viridi
+namespace dsl
 {
-    namespace components
+    namespace arduino_components
     {
         // Public methods for Color
         Color::operator uint32_t() const
@@ -48,7 +48,7 @@ namespace viridi
         {
         }
 
-        void WS2812B::fill(const viridi::entity_manager::EntityEvent &e)
+        void WS2812B::fill(const dsl::entity_manager::EntityEvent &e)
         {
             if (e.entity)
             {

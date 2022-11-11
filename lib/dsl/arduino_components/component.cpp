@@ -1,8 +1,8 @@
-#include "components/component.h"
+#include "arduino_components/component.h"
 
-namespace viridi
+namespace dsl
 {
-    namespace components
+    namespace arduino_components
     {
         // Public methods for Component
         Component::Component(const std::string &name) : _name(name)

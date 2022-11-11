@@ -6,13 +6,13 @@ void WiFiConnect::__wifi_event(WiFiEvent_t event)
 {
     if (event == ARDUINO_EVENT_WIFI_AP_STACONNECTED)
     {
-        viridi::entity_manager::entities["wificonnect.connected_client"] = 2;
+        dsl::entity_manager::entities["wificonnect.connected_client"] = 2;
         return;
     }
 
     if (event == ARDUINO_EVENT_WIFI_AP_STADISCONNECTED)
     {
-        viridi::entity_manager::entities["wificonnect.connected_client"] = 1;
+        dsl::entity_manager::entities["wificonnect.connected_client"] = 1;
         return;
     }
 }
@@ -31,8 +31,8 @@ void WiFiConnect::setup()
     _setup();
 
     // Set local entities
-    viridi::entity_manager::entities["wificonnect.connected_client"] = 0;
-    viridi::entity_manager::entities["wificonnect.connected_client"].subscribe("update", {std::bind(&WiFiConnect::__set_screen_text, this, std::placeholders::_1)});
+    dsl::entity_manager::entities["wificonnect.connected_client"] = 0;
+    dsl::entity_manager::entities["wificonnect.connected_client"].subscribe("update", {std::bind(&WiFiConnect::__set_screen_text, this, std::placeholders::_1)});
 
     // Set up the webserver
 
@@ -49,7 +49,7 @@ void WiFiConnect::setup()
     __web_server.begin();
 
     // Set a message on the screen about connecting
-    viridi::entity_manager::entities["wificonnect.connected_client"] = 1;
+    dsl::entity_manager::entities["wificonnect.connected_client"] = 1;
 }
 
 void WiFiConnect::loop()
@@ -65,43 +65,43 @@ void WiFiConnect::loop()
     delay(50);
 }
 
-void WiFiConnect::__set_screen_text(const viridi::entity_manager::EntityEvent &e)
+void WiFiConnect::__set_screen_text(const dsl::entity_manager::EntityEvent &e)
 {
     if (static_cast<int>(e.entity) == 1)
     {
-        viridi::entity_manager::entities["lcd.display.line0"] = std::string("Verbind met WiFi");
-        viridi::entity_manager::entities["lcd.display.line1"] = std::string("   Advent2022");
+        dsl::entity_manager::entities["lcd.display.line0"] = std::string("Verbind met WiFi");
+        dsl::entity_manager::entities["lcd.display.line1"] = std::string("   Advent2022");
         return;
     }
 
     if (static_cast<int>(e.entity) == 2)
     {
-        viridi::entity_manager::entities["lcd.display.line0"] = std::string(" Navigeer naar");
-        viridi::entity_manager::entities["lcd.display.line1"] = std::string("  192.168.4.1");
+        dsl::entity_manager::entities["lcd.display.line0"] = std::string(" Navigeer naar");
+        dsl::entity_manager::entities["lcd.display.line1"] = std::string("  192.168.4.1");
         return;
     }
 
     if (static_cast<int>(e.entity) == 3)
     {
-        viridi::entity_manager::entities["lcd.display.line0"] = std::string("  Vul je WiFi");
-        viridi::entity_manager::entities["lcd.display.line1"] = std::string("  gegevens in");
+        dsl::entity_manager::entities["lcd.display.line0"] = std::string("  Vul je WiFi");
+        dsl::entity_manager::entities["lcd.display.line1"] = std::string("  gegevens in");
         return;
     }
 
     if (static_cast<int>(e.entity) == 4)
     {
-        viridi::entity_manager::entities["lcd.display.line0"] = std::string("    Gelukt !");
+        dsl::entity_manager::entities["lcd.display.line0"] = std::string("    Gelukt !");
 
         for (uint16_t i = 3; i > 0; i--)
         {
             std::stringstream s;
             s << "Herstarten in " << i << "s";
-            viridi::entity_manager::entities["lcd.display.line1"] = std::string(s.str());
+            dsl::entity_manager::entities["lcd.display.line1"] = std::string(s.str());
             delay(1000);
         }
 
-        viridi::entity_manager::entities["lcd.display.line0"] = std::string("  Rebooting...");
-        viridi::entity_manager::entities["lcd.display.line1"] = std::string("");
+        dsl::entity_manager::entities["lcd.display.line0"] = std::string("  Rebooting...");
+        dsl::entity_manager::entities["lcd.display.line1"] = std::string("");
 
         delay(1000);
 
@@ -114,7 +114,7 @@ void WiFiConnect::__set_screen_text(const viridi::entity_manager::EntityEvent &e
 void WiFiConnect::__webserver_mainpage()
 {
     // Client connected
-    viridi::entity_manager::entities["wificonnect.connected_client"] = 3;
+    dsl::entity_manager::entities["wificonnect.connected_client"] = 3;
 
     // Create the page to return
     std::stringstream page;
@@ -182,5 +182,5 @@ void WiFiConnect::__webserver_save()
     __web_server.send(200, "text/html", String(page.str().c_str()));
 
     // Reboot!
-    viridi::entity_manager::entities["wificonnect.connected_client"] = 4;
+    dsl::entity_manager::entities["wificonnect.connected_client"] = 4;
 }

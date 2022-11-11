@@ -3,9 +3,9 @@
 
 #include <string>
 
-namespace viridi
+namespace dsl
 {
-    namespace components
+    namespace arduino_components
     {
         class Component
         {

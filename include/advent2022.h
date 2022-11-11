@@ -11,10 +11,10 @@
 #include <time.h>
 
 // Viridi includes
-#include <apps/appbase.h>
-#include <components/liquidcrystal.h>
-#include <components/binarysensor.h>
-#include <components/ws2812b.h>
+#include <arduino_apps/appbase.h>
+#include <arduino_components/liquidcrystal.h>
+#include <arduino_components/binarysensor.h>
+#include <arduino_components/ws2812b.h>
 
 // Arduino includes
 #include <WiFi.h>
@@ -41,11 +41,11 @@ struct Mood
     std::vector<uint16_t> leds;
 };
 
-class Advent2022 : public viridi::apps::AppBase
+class Advent2022 : public dsl::arduino_apps::AppBase
 {
 private:
     // The LCD screen
-    viridi::components::LiquidCrystal __display;
+    dsl::arduino_components::LiquidCrystal __display;
 
     // Objects for NTP
     WiFiUDP __udp;
@@ -53,13 +53,13 @@ private:
     unsigned long __ntp_last_update;
 
     // The buttons
-    viridi::components::BinarySensor __next;
-    viridi::components::BinarySensor __previous;
-    viridi::components::BinarySensor __mode;
-    viridi::components::BinarySensor __enter;
+    dsl::arduino_components::BinarySensor __next;
+    dsl::arduino_components::BinarySensor __previous;
+    dsl::arduino_components::BinarySensor __mode;
+    dsl::arduino_components::BinarySensor __enter;
 
     // LED strip
-    viridi::components::WS2812B __leds;
+    dsl::arduino_components::WS2812B __leds;
 
     // Objects foor the 'moodlighting'
     std::vector<Mood> __moodlightings;
@@ -78,17 +78,18 @@ public:
     Date get_date();
 
     // Methods to switch between modes
-    void next_mode_button(const viridi::entity_manager::EntityEvent &e);
+    void next_mode_button(const dsl::entity_manager::EntityEvent &e);
     void configure_mode();
 
     // Methods for the 'moodlighting' mode
     void set_mood();
-    void next_mood(const viridi::entity_manager::EntityEvent &e);
-    void previous_mood(const viridi::entity_manager::EntityEvent &e);
+    void next_mood(const dsl::entity_manager::EntityEvent &e);
+    void previous_mood(const dsl::entity_manager::EntityEvent &e);
 
     // Methods for the 'calendar' mode
-    void next_index(const viridi::entity_manager::EntityEvent &e);
-    void previous_index(const viridi::entity_manager::EntityEvent &e);
+    void next_index(const dsl::entity_manager::EntityEvent &e);
+    void previous_index(const dsl::entity_manager::EntityEvent &e);
+    void set_calendar_index();
 };
 
 #endif // __ADVENT2022_H__

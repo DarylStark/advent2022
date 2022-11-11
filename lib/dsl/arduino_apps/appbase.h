@@ -2,17 +2,17 @@
 #define __APP_H__
 
 #include <list>
-#include "components/component.h"
+#include "arduino_components/component.h"
 #include "entity_manager/entity.h"
 
-namespace viridi
+namespace dsl
 {
-    namespace apps
+    namespace arduino_apps
     {
         class AppBase
         {
         private:
-            std::list<components::Component *> __components;
+            std::list<arduino_components::Component *> __components;
 
         protected:
             virtual void _setup();
@@ -20,7 +20,7 @@ namespace viridi
 
         public:
             // Methods to manage components
-            void register_component(components::Component &component);
+            void register_component(arduino_components::Component &component);
 
             // Pure virtual methods for subclasses
             virtual void setup() = 0;

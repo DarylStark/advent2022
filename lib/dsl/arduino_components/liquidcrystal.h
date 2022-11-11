@@ -5,11 +5,11 @@
 #include <string>
 #include <LiquidCrystal_I2C.h>
 #include "entity_manager/entity.h"
-#include "components/component.h"
+#include "arduino_components/component.h"
 
-namespace viridi
+namespace dsl
 {
-    namespace components
+    namespace arduino_components
     {
         class LiquidCrystal : public Component
         {
@@ -25,8 +25,8 @@ namespace viridi
             void setup() override;
             void loop() override;
             void clear(int line = -1);
-            void set_text(int line, const viridi::entity_manager::EntityEvent &e);
-            void set_backlight(const viridi::entity_manager::EntityEvent &e);
+            void set_text(int line, const dsl::entity_manager::EntityEvent &e);
+            void set_backlight(const dsl::entity_manager::EntityEvent &e);
         };
     };
 }

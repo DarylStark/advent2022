@@ -7,7 +7,7 @@
 #include <variant>
 #include <thread>
 
-namespace viridi
+namespace dsl
 {
     namespace entity_manager
     {

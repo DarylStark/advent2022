@@ -1,8 +1,8 @@
-#include "components/binarysensor.h"
+#include "arduino_components/binarysensor.h"
 
-namespace viridi
+namespace dsl
 {
-    namespace components
+    namespace arduino_components
     {
         BinarySensor::BinarySensor(const std::string &name, uint8_t gpio, input_type type /* = Normal */)
             : Component(name), __gpio(gpio), __type(type)
