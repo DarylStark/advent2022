@@ -233,7 +233,7 @@ void Advent2022::configure_mode()
     {
         // Check if it is time yet to start the calendar
         Date now = get_date();
-        if (now.year != 2022 || now.month != 11) // TODO: TODO: TODO: aanpassen naar 12, heel belangrijk!!!!
+        if (now.year != 2022 || now.month != 12) // TODO: TODO: TODO: aanpassen naar 12, heel belangrijk!!!!
         {
             dsl::entity_manager::entities["lcd.display.line0"] = std::string("Het is nog geen");
             dsl::entity_manager::entities["lcd.display.line1"] = std::string("december!");
