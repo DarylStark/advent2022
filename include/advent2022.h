@@ -6,6 +6,7 @@
 #include <sstream>
 #include <functional>
 #include <vector>
+#include <array>
 
 // C includes
 #include <time.h>
@@ -64,6 +65,10 @@ private:
     // Objects foor the 'moodlighting'
     std::vector<Mood> __moodlightings;
 
+    // Objects for Calendar
+    std::array<std::vector<uint16_t>, 31> __calendar_leds;
+    std::array<uint16_t, 31> __calendar_correct;
+
 public:
     Advent2022();
     void setup() override;
@@ -88,9 +93,12 @@ public:
     void toggle_lcd(const dsl::entity_manager::EntityEvent &e);
 
     // Methods for the 'calendar' mode
+    void set_calendar_text();
+    void set_calendar_index();
     void next_index(const dsl::entity_manager::EntityEvent &e);
     void previous_index(const dsl::entity_manager::EntityEvent &e);
-    void set_calendar_index();
+    void flash_index(const uint16_t index, const dsl::arduino_components::Color color, uint16_t count = 3);
+    void select_index(const dsl::entity_manager::EntityEvent &e);
 };
 
 #endif // __ADVENT2022_H__

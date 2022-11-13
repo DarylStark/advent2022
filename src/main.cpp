@@ -60,7 +60,7 @@ void setup()
             {
                 dsl::entity_manager::entities["lcd.display.line0"] = std::string("   Verbonden!");
                 dsl::entity_manager::entities["lcd.display.line1"] = std::string("");
-                delay(3000);
+                delay(1000);
             }
         }
     }

@@ -6,7 +6,7 @@ Advent2022::Advent2022()
       __previous("previous", 13, dsl::arduino_components::input_type::Pullup),
       __mode("mode", 19, dsl::arduino_components::input_type::Pullup),
       __enter("enter", 18, dsl::arduino_components::input_type::Pullup),
-      __leds("leds", 5, 20),
+      __leds("leds", 5, 31),
       __ntp_client(__udp)
 {
     register_component(__display);
@@ -42,6 +42,42 @@ void Advent2022::setup()
     __moodlightings.push_back({"Off", {}});
     __moodlightings.push_back({"Outline", {0, 1, 18, 19}});
     __moodlightings.push_back({"Full", {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}});
+
+    // Create the LEDs for the Calendar
+    __calendar_leds[0] = {0};
+    __calendar_leds[1] = {1};
+    __calendar_leds[2] = {2};
+    __calendar_leds[3] = {3};
+    __calendar_leds[4] = {4};
+    __calendar_leds[5] = {5};
+    __calendar_leds[6] = {6};
+    __calendar_leds[7] = {7};
+    __calendar_leds[8] = {8};
+    __calendar_leds[9] = {9};
+    __calendar_leds[10] = {10};
+    __calendar_leds[11] = {11};
+    __calendar_leds[12] = {12};
+    __calendar_leds[13] = {13};
+    __calendar_leds[14] = {14};
+    __calendar_leds[15] = {15};
+    __calendar_leds[16] = {16};
+    __calendar_leds[17] = {17};
+    __calendar_leds[18] = {18};
+    __calendar_leds[19] = {19};
+    __calendar_leds[20] = {20};
+    __calendar_leds[21] = {21};
+    __calendar_leds[22] = {22};
+    __calendar_leds[23] = {23};
+    __calendar_leds[24] = {24};
+    __calendar_leds[25] = {25};
+    __calendar_leds[26] = {26};
+    __calendar_leds[27] = {27};
+    __calendar_leds[28] = {28};
+    __calendar_leds[29] = {29};
+    __calendar_leds[30] = {30};
+
+    // Set the correct items for each day
+    __calendar_correct = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
 
     // Add listeners to the mode-entities
     dsl::entity_manager::entities["advent.mode"].subscribe(
@@ -195,7 +231,7 @@ void Advent2022::configure_mode()
     {
         // Check if it is time yet to start the calendar
         Date now = get_date();
-        if (now.year != 2022 || now.month != 12)
+        if (now.year != 2022 || now.month != 11) // TODO: TODO: TODO: aanpassen naar 12, heel belangrijk!!!!
         {
             dsl::entity_manager::entities["lcd.display.line0"] = std::string("Het is nog geen");
             dsl::entity_manager::entities["lcd.display.line1"] = std::string("december!");
@@ -207,12 +243,14 @@ void Advent2022::configure_mode()
         // Unsubscribe from the events of the calendar mode
         dsl::entity_manager::entities["next.sensor.low"].unsubscribe_all();
         dsl::entity_manager::entities["previous.sensor.low"].unsubscribe_all();
+        dsl::entity_manager::entities["enter.sensor.low"].unsubscribe_all();
 
         dsl::entity_manager::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_index, this, std::placeholders::_1)});
         dsl::entity_manager::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_index, this, std::placeholders::_1)});
+        dsl::entity_manager::entities["enter.sensor.low"].subscribe("select_index", {std::bind(&Advent2022::select_index, this, std::placeholders::_1)});
 
-        dsl::entity_manager::entities["lcd.display.line0"] = std::string("Kies  een  vakje");
-        dsl::entity_manager::entities["lcd.display.line1"] = std::string("en druk  [ENTER]");
+        set_calendar_text();
+        set_calendar_index();
 
         return;
     }
@@ -280,22 +318,99 @@ void Advent2022::toggle_lcd(const dsl::entity_manager::EntityEvent &e)
         dsl::entity_manager::entities["lcd.display.backlight"] = !dsl::entity_manager::entities["lcd.display.backlight"];
 }
 
-void Advent2022::next_index(const dsl::entity_manager::EntityEvent &e)
+void Advent2022::set_calendar_text()
 {
-    if (e.entity)
-        dsl::entity_manager::entities["advent.calendar_selected"]++;
-}
-
-void Advent2022::previous_index(const dsl::entity_manager::EntityEvent &e)
-{
-    if (e.entity)
-        dsl::entity_manager::entities["advent.calendar_selected"]--;
+    dsl::entity_manager::entities["lcd.display.line0"] = std::string("Kies  een  vakje");
+    dsl::entity_manager::entities["lcd.display.line1"] = std::string("en druk  [ENTER]");
 }
 
 void Advent2022::set_calendar_index()
 {
     if (static_cast<int>(dsl::entity_manager::entities["advent.mode"]) == AppMode::Calendar)
     {
-        // TODO: Add code to navigate between boxes
+        // Get the selected day
+        uint16_t selected_index = static_cast<int>(dsl::entity_manager::entities["advent.calendar_selected"]);
+        Serial.println(selected_index);
+
+        // Set the correct LEDs for this day
+        __leds.clear();
+        for (const uint16_t &led : __calendar_leds[selected_index])
+        {
+            __leds.set_color(led, 1, {0x33, 0x33, 0x00});
+        }
+        __leds.show();
+    }
+}
+
+void Advent2022::next_index(const dsl::entity_manager::EntityEvent &e)
+{
+    if (e.entity)
+    {
+        if (static_cast<int>(dsl::entity_manager::entities["advent.calendar_selected"]) < 30)
+            dsl::entity_manager::entities["advent.calendar_selected"]++;
+        else
+            dsl::entity_manager::entities["advent.calendar_selected"] = 0;
+    }
+}
+
+void Advent2022::previous_index(const dsl::entity_manager::EntityEvent &e)
+{
+    if (e.entity)
+    {
+        if (static_cast<int>(dsl::entity_manager::entities["advent.calendar_selected"]) > 0)
+            dsl::entity_manager::entities["advent.calendar_selected"]--;
+        else
+            dsl::entity_manager::entities["advent.calendar_selected"] = 30;
+    }
+}
+
+void Advent2022::flash_index(const uint16_t index, const dsl::arduino_components::Color color, uint16_t count /* = 3 */)
+{
+    for (uint16_t i = 0; i < count; ++i)
+    {
+        // Turn on
+        __leds.clear();
+        for (const uint16_t &led : __calendar_leds[index])
+        {
+            __leds.set_color(led, 1, color);
+        }
+        __leds.show();
+        delay(300);
+
+        // Turn off
+        __leds.clear();
+        __leds.show();
+        delay(300);
+    }
+}
+
+void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
+{
+    if (e.entity)
+    {
+        uint16_t selected_index = static_cast<int>(dsl::entity_manager::entities["advent.calendar_selected"]);
+        bool correct_index = __calendar_correct[get_date().day - 1] == selected_index;
+
+        // Do the correct action
+        if (correct_index)
+        {
+            dsl::entity_manager::entities["lcd.display.line0"] = std::string(" Goed geraden!!");
+            dsl::entity_manager::entities["lcd.display.line1"] = std::string("   WOOP WOOP!");
+
+            // Flash green!
+            flash_index(selected_index, {0x0, 33, 0}, 16);
+
+            // Back to MoodLighting
+            dsl::entity_manager::entities["advent.mode"] = AppMode::MoodLighting;
+        }
+        else
+        {
+            // Flash red. It was wrong
+            dsl::entity_manager::entities["lcd.display.line0"] = std::string("FOUT FOUT FOUT!!");
+            dsl::entity_manager::entities["lcd.display.line1"] = std::string("Harstikke fout!!");
+            flash_index(selected_index, {0x33, 0, 0}, 4);
+            set_calendar_text();
+            set_calendar_index();
+        }
     }
 }
