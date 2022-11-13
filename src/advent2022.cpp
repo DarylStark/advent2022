@@ -341,7 +341,6 @@ void Advent2022::set_calendar_index()
     {
         // Get the selected day
         uint16_t selected_index = static_cast<int>(dsl::entity_manager::entities["advent.calendar_selected"]);
-        Serial.println(selected_index);
 
         // Set the correct LEDs for this day
         __leds.clear();

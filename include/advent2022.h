@@ -24,7 +24,7 @@
 
 // Configure the Advent Calendar annoyance
 #define TURNS 3
-#define ANNOYENCE_LEVEL 3 // How annoying is it going to be? Higher is more annoying
+#define ANNOYENCE_LEVEL 0 // How annoying is it going to be? Higher is more annoying
 
 enum AppMode
 {
