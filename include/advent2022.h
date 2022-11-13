@@ -22,6 +22,9 @@
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 
+// Configuration for the LED strip
+#define LED_LENGTH 80
+
 // Configure the Advent Calendar annoyance
 #define TURNS 3
 #define ANNOYENCE_LEVEL 3 // How annoying is it going to be? Higher is more annoying

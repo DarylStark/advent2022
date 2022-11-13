@@ -6,7 +6,7 @@ Advent2022::Advent2022()
       __previous("previous", 13, dsl::arduino_components::input_type::Pullup),
       __mode("mode", 19, dsl::arduino_components::input_type::Pullup),
       __enter("enter", 18, dsl::arduino_components::input_type::Pullup),
-      __leds("leds", 5, 31),
+      __leds("leds", 5, LED_LENGTH),
       __ntp_client(__udp),
       __turns(0),
       __continue_time(ANNOYENCE_LEVEL * 60 * 1000 * 2) // Two times the normal amount of time to wait
@@ -42,8 +42,11 @@ void Advent2022::setup()
     // Create the moods
     __moodlightings.reserve(3);
     __moodlightings.push_back({"Off", {}});
-    __moodlightings.push_back({"Outline", {0, 1, 18, 19}});
-    __moodlightings.push_back({"Full", {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}});
+    std::vector<uint16_t> leds_for_full;
+    for (uint16_t led = 0; led < LED_LENGTH; ++led)
+        leds_for_full.push_back(led);
+    __moodlightings.push_back({"Full", leds_for_full});
+    __moodlightings.push_back({"Outline", {0, 1, 68, 69}});
 
     // Create the LEDs for the Calendar
     __calendar_leds[0] = {0};
