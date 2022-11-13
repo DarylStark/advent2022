@@ -7,7 +7,9 @@ Advent2022::Advent2022()
       __mode("mode", 19, dsl::arduino_components::input_type::Pullup),
       __enter("enter", 18, dsl::arduino_components::input_type::Pullup),
       __leds("leds", 5, 31),
-      __ntp_client(__udp)
+      __ntp_client(__udp),
+      __turns(0),
+      __continue_time(ANNOYENCE_LEVEL * 60 * 1000 * 2) // Two times the normal amount of time to wait
 {
     register_component(__display);
     register_component(__next);
@@ -235,7 +237,16 @@ void Advent2022::configure_mode()
         {
             dsl::entity_manager::entities["lcd.display.line0"] = std::string("Het is nog geen");
             dsl::entity_manager::entities["lcd.display.line1"] = std::string("december!");
-            delay(5000);
+            delay(3000);
+            mode = AppMode::MoodLighting;
+            return;
+        }
+
+        if (millis() < __continue_time)
+        {
+            dsl::entity_manager::entities["lcd.display.line0"] = std::string(" Nope, nog even");
+            dsl::entity_manager::entities["lcd.display.line1"] = std::string("    wachten!");
+            delay(3000);
             mode = AppMode::MoodLighting;
             return;
         }
@@ -405,12 +416,40 @@ void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
         }
         else
         {
-            // Flash red. It was wrong
-            dsl::entity_manager::entities["lcd.display.line0"] = std::string("FOUT FOUT FOUT!!");
-            dsl::entity_manager::entities["lcd.display.line1"] = std::string("Harstikke fout!!");
-            flash_index(selected_index, {0x33, 0, 0}, 4);
-            set_calendar_text();
-            set_calendar_index();
+            // Increase the turn and calculat ethe turns left
+            __turns++;
+            uint16_t turns_left = TURNS - __turns;
+
+            // Update the LCD
+            if (turns_left > 0)
+            {
+                std::stringstream text;
+                text << "   Nog " << turns_left << " keer";
+                dsl::entity_manager::entities["lcd.display.line0"] = std::string("FOUT FOUT FOUT!!");
+                dsl::entity_manager::entities["lcd.display.line1"] = text.str();
+
+                // Flash red
+                flash_index(selected_index, {0x33, 0, 0}, 4);
+
+                // Continue
+                set_calendar_text();
+                set_calendar_index();
+            }
+            else
+            {
+                dsl::entity_manager::entities["lcd.display.line0"] = std::string("Af :( Nu moet je");
+                dsl::entity_manager::entities["lcd.display.line1"] = std::string("  wachten :'-)");
+
+                // Flash red
+                flash_index(selected_index, {0x33, 0, 0}, 4);
+
+                // Set time that we can continue
+                __continue_time = millis() + (ANNOYENCE_LEVEL * 60 * 1000);
+                __turns = 0;
+
+                // Back to MoodLighting
+                dsl::entity_manager::entities["advent.mode"] = AppMode::MoodLighting;
+            }
         }
     }
 }

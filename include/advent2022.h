@@ -22,6 +22,10 @@
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 
+// Configure the Advent Calendar annoyance
+#define TURNS 3
+#define ANNOYENCE_LEVEL 3 // How annoying is it going to be? Higher is more annoying
+
 enum AppMode
 {
     Setup = -1,
@@ -68,6 +72,8 @@ private:
     // Objects for Calendar
     std::array<std::vector<uint16_t>, 31> __calendar_leds;
     std::array<uint16_t, 31> __calendar_correct;
+    uint16_t __turns;
+    unsigned long __continue_time;
 
 public:
     Advent2022();
