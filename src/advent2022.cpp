@@ -79,7 +79,7 @@ void Advent2022::loop()
     update_ntp();
 
     // Delay :)
-    delay(100);
+    delay(50);
 }
 
 bool Advent2022::reconnect_to_wifi()
@@ -177,9 +177,11 @@ void Advent2022::configure_mode()
         // Unsubscribe from the events of the calendar mode
         dsl::entity_manager::entities["next.sensor.low"].unsubscribe_all();
         dsl::entity_manager::entities["previous.sensor.low"].unsubscribe_all();
+        dsl::entity_manager::entities["enter.sensor.low"].unsubscribe_all();
 
         dsl::entity_manager::entities["next.sensor.low"].subscribe("button_next", {std::bind(&Advent2022::next_mood, this, std::placeholders::_1)});
         dsl::entity_manager::entities["previous.sensor.low"].subscribe("button_prev", {std::bind(&Advent2022::previous_mood, this, std::placeholders::_1)});
+        dsl::entity_manager::entities["enter.sensor.low"].subscribe("enter", {std::bind(&Advent2022::toggle_lcd, this, std::placeholders::_1)});
 
         dsl::entity_manager::entities["lcd.display.line0"] = std::string("Sfeerverlichting");
         dsl::entity_manager::entities["lcd.display.line1"] = std::string("");
@@ -270,6 +272,12 @@ void Advent2022::previous_mood(const dsl::entity_manager::EntityEvent &e)
 {
     if (e.entity)
         dsl::entity_manager::entities["advent.mood_current"]--;
+}
+
+void Advent2022::toggle_lcd(const dsl::entity_manager::EntityEvent &e)
+{
+    if (e.entity)
+        dsl::entity_manager::entities["lcd.display.backlight"] = !dsl::entity_manager::entities["lcd.display.backlight"];
 }
 
 void Advent2022::next_index(const dsl::entity_manager::EntityEvent &e)

@@ -85,6 +85,7 @@ public:
     void set_mood();
     void next_mood(const dsl::entity_manager::EntityEvent &e);
     void previous_mood(const dsl::entity_manager::EntityEvent &e);
+    void toggle_lcd(const dsl::entity_manager::EntityEvent &e);
 
     // Methods for the 'calendar' mode
     void next_index(const dsl::entity_manager::EntityEvent &e);
