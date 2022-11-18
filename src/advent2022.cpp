@@ -211,6 +211,7 @@ void Advent2022::next_mode_button(const dsl::entity_manager::EntityEvent &e)
 
         if (static_cast<int>(mode) == AppMode::MoodLighting)
         {
+            dsl::entity_manager::entities["lcd.display.backlight"] = true;
             mode = AppMode::Calendar;
             return;
         }
