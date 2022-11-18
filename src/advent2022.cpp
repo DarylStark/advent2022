@@ -46,40 +46,54 @@ void Advent2022::setup()
     for (uint16_t led = 0; led < LED_LENGTH; ++led)
         leds_for_full.push_back(led);
     __moodlightings.push_back({"Full", leds_for_full});
-    __moodlightings.push_back({"Outline", {0, 1, 68, 69}});
+    __moodlightings.push_back({"Outline", {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 40, 39, 38, 24, 25, 44, 45, 54, 55, 70, 69, 68, 60, 59, 58, 74, 75, 79, 80, 84, 85, 86, 89, 90, 91}});
 
     // Create the LEDs for the Calendar
-    __calendar_leds[0] = {0};
-    __calendar_leds[1] = {1};
-    __calendar_leds[2] = {2};
-    __calendar_leds[3] = {3};
-    __calendar_leds[4] = {4};
-    __calendar_leds[5] = {5};
-    __calendar_leds[6] = {6};
-    __calendar_leds[7] = {7};
-    __calendar_leds[8] = {8};
-    __calendar_leds[9] = {9};
-    __calendar_leds[10] = {10};
-    __calendar_leds[11] = {11};
-    __calendar_leds[12] = {12};
-    __calendar_leds[13] = {13};
-    __calendar_leds[14] = {14};
-    __calendar_leds[15] = {15};
-    __calendar_leds[16] = {16};
-    __calendar_leds[17] = {17};
-    __calendar_leds[18] = {18};
-    __calendar_leds[19] = {19};
-    __calendar_leds[20] = {20};
-    __calendar_leds[21] = {21};
-    __calendar_leds[22] = {22};
-    __calendar_leds[23] = {23};
-    __calendar_leds[24] = {24};
-    __calendar_leds[25] = {25};
-    __calendar_leds[26] = {26};
-    __calendar_leds[27] = {27};
-    __calendar_leds[28] = {28};
-    __calendar_leds[29] = {29};
-    __calendar_leds[30] = {30};
+
+    // Lowest row
+    __calendar_leds[0] = {0, 1};
+    __calendar_leds[1] = {2, 3};
+    __calendar_leds[2] = {5, 6};
+    __calendar_leds[3] = {7, 8};
+    __calendar_leds[4] = {9, 10, 11};
+    __calendar_leds[5] = {12, 13};
+    __calendar_leds[6] = {14, 15};
+    __calendar_leds[7] = {16, 17, 18};
+    __calendar_leds[8] = {19, 20};
+
+    // Second row
+    __calendar_leds[9] = {40, 39, 38};
+    __calendar_leds[10] = {37, 36};
+    __calendar_leds[11] = {35, 34};
+    __calendar_leds[12] = {33, 32};
+    __calendar_leds[13] = {31, 30, 29};
+    __calendar_leds[14] = {28, 27};
+    __calendar_leds[15] = {25, 24};
+
+    // Third row
+    __calendar_leds[16] = {44, 45};
+    __calendar_leds[17] = {47, 48};
+    __calendar_leds[18] = {49, 50};
+    __calendar_leds[19] = {51, 52, 53};
+    __calendar_leds[20] = {54, 55};
+
+    // Fourth row
+    __calendar_leds[21] = {70, 69, 68};
+    __calendar_leds[22] = {67, 66};
+    __calendar_leds[23] = {65, 64};
+    __calendar_leds[24] = {62, 61};
+    __calendar_leds[25] = {60, 59, 58};
+
+    // Fifth row
+    __calendar_leds[26] = {74, 75};
+    __calendar_leds[27] = {77, 78};
+    __calendar_leds[28] = {79, 80};
+
+    // Sixth row
+    __calendar_leds[29] = {84, 85, 86};
+
+    // Seventh row
+    __calendar_leds[30] = {89, 90, 91};
 
     // Set the correct items for each day
     __calendar_correct = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
@@ -236,7 +250,7 @@ void Advent2022::configure_mode()
     {
         // Check if it is time yet to start the calendar
         Date now = get_date();
-        if (now.year != 2022 || now.month != 12) // TODO: TODO: TODO: aanpassen naar 12, heel belangrijk!!!!
+        if (now.year != 2022 || now.month != 11) // TODO: TODO: TODO: aanpassen naar 12, heel belangrijk!!!!
         {
             dsl::entity_manager::entities["lcd.display.line0"] = std::string("Het is nog geen");
             dsl::entity_manager::entities["lcd.display.line1"] = std::string("december!");
@@ -349,7 +363,7 @@ void Advent2022::set_calendar_index()
         __leds.clear();
         for (const uint16_t &led : __calendar_leds[selected_index])
         {
-            __leds.set_color(led, 1, {0x33, 0x33, 0x00});
+            __leds.set_color(led, 1, {0x0, 0x0, 0xff});
         }
         __leds.show();
     }
@@ -377,7 +391,7 @@ void Advent2022::previous_index(const dsl::entity_manager::EntityEvent &e)
     }
 }
 
-void Advent2022::flash_index(const uint16_t index, const dsl::arduino_components::Color color, uint16_t count /* = 3 */)
+void Advent2022::flash_index(const uint16_t index, const dsl::arduino_components::Color color, uint16_t count /* = 3 */, uint16_t flash_delay /* = 300 */)
 {
     for (uint16_t i = 0; i < count; ++i)
     {
@@ -388,12 +402,12 @@ void Advent2022::flash_index(const uint16_t index, const dsl::arduino_components
             __leds.set_color(led, 1, color);
         }
         __leds.show();
-        delay(300);
+        delay(flash_delay);
 
         // Turn off
         __leds.clear();
         __leds.show();
-        delay(300);
+        delay(flash_delay);
     }
 }
 
@@ -411,7 +425,7 @@ void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
             dsl::entity_manager::entities["lcd.display.line1"] = std::string("   WOOP WOOP!");
 
             // Flash green!
-            flash_index(selected_index, {0x0, 33, 0}, 16);
+            flash_index(selected_index, {0x0, 0xff, 0}, 32, 100);
 
             // Back to MoodLighting
             dsl::entity_manager::entities["advent.mode"] = AppMode::MoodLighting;
@@ -431,7 +445,7 @@ void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
                 dsl::entity_manager::entities["lcd.display.line1"] = text.str();
 
                 // Flash red
-                flash_index(selected_index, {0x33, 0, 0}, 4);
+                flash_index(selected_index, {0xff, 0, 0}, 4);
 
                 // Continue
                 set_calendar_text();
@@ -443,7 +457,7 @@ void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
                 dsl::entity_manager::entities["lcd.display.line1"] = std::string("  wachten :'-)");
 
                 // Flash red
-                flash_index(selected_index, {0x33, 0, 0}, 4);
+                flash_index(selected_index, {0xff, 0, 0}, 4);
 
                 // Set time that we can continue
                 __continue_time = millis() + (ANNOYENCE_LEVEL * 60 * 1000);

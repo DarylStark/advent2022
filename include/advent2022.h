@@ -27,7 +27,7 @@
 
 // Configure the Advent Calendar annoyance
 #define TURNS 3
-#define ANNOYENCE_LEVEL 3 // How annoying is it going to be? Higher is more annoying
+#define ANNOYENCE_LEVEL 0 // How annoying is it going to be? Higher is more annoying
 
 enum AppMode
 {
@@ -106,7 +106,7 @@ public:
     void set_calendar_index();
     void next_index(const dsl::entity_manager::EntityEvent &e);
     void previous_index(const dsl::entity_manager::EntityEvent &e);
-    void flash_index(const uint16_t index, const dsl::arduino_components::Color color, uint16_t count = 3);
+    void flash_index(const uint16_t index, const dsl::arduino_components::Color color, uint16_t count = 3, uint16_t flash_delay = 300);
     void select_index(const dsl::entity_manager::EntityEvent &e);
 };
 
