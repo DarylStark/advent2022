@@ -23,7 +23,7 @@
 #include <NTPClient.h>
 
 // Configuration for the LED strip
-#define LED_LENGTH 80
+#define LED_LENGTH 92
 
 // Configure the Advent Calendar annoyance
 #define TURNS 3
