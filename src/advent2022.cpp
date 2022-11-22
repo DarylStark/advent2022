@@ -9,7 +9,7 @@ Advent2022::Advent2022()
       __leds("leds", 5, LED_LENGTH),
       __ntp_client(__udp),
       __turns(0),
-      __continue_time(ANNOYENCE_LEVEL * 60 * 1000 * 2) // Two times the normal amount of time to wait
+      __continue_time(ANNOYANCE_LEVEL * 60 * 1000 * 2) // Two times the normal amount of time to wait
 {
     register_component(__display);
     register_component(__next);
@@ -461,7 +461,7 @@ void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
                 flash_index(selected_index, {0xff, 0, 0}, 4);
 
                 // Set time that we can continue
-                __continue_time = millis() + (ANNOYENCE_LEVEL * 60 * 1000);
+                __continue_time = millis() + (ANNOYANCE_LEVEL * 60 * 1000);
                 __turns = 0;
 
                 // Back to MoodLighting
