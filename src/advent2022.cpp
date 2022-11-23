@@ -3,7 +3,7 @@
 Advent2022::Advent2022()
     : __display("lcd", 0x27, 16, 2),
       __next("next", 4, dsl::arduino_components::input_type::Pullup),
-      __previous("previous", 13, dsl::arduino_components::input_type::Pullup),
+      __previous("previous", 26, dsl::arduino_components::input_type::Pullup),
       __mode("mode", 19, dsl::arduino_components::input_type::Pullup),
       __enter("enter", 18, dsl::arduino_components::input_type::Pullup),
       __leds("leds", 5, LED_LENGTH),
@@ -55,18 +55,18 @@ void Advent2022::setup()
     __calendar_leds[1] = {2, 3};
     __calendar_leds[2] = {5, 6};
     __calendar_leds[3] = {7, 8};
-    __calendar_leds[4] = {9, 10, 11};
+    __calendar_leds[4] = {10, 11};
     __calendar_leds[5] = {12, 13};
     __calendar_leds[6] = {14, 15};
     __calendar_leds[7] = {16, 17, 18};
     __calendar_leds[8] = {19, 20};
 
     // Second row
-    __calendar_leds[9] = {40, 39, 38};
+    __calendar_leds[9] = {39, 40};
     __calendar_leds[10] = {37, 36};
     __calendar_leds[11] = {35, 34};
     __calendar_leds[12] = {33, 32};
-    __calendar_leds[13] = {31, 30, 29};
+    __calendar_leds[13] = {30};
     __calendar_leds[14] = {28, 27};
     __calendar_leds[15] = {25, 24};
 
@@ -78,15 +78,15 @@ void Advent2022::setup()
     __calendar_leds[20] = {54, 55};
 
     // Fourth row
-    __calendar_leds[21] = {70, 69, 68};
-    __calendar_leds[22] = {67, 66};
-    __calendar_leds[23] = {65, 64};
+    __calendar_leds[21] = {68};
+    __calendar_leds[22] = {65, 66};
+    __calendar_leds[23] = {64, 63};
     __calendar_leds[24] = {62, 61};
     __calendar_leds[25] = {60, 59, 58};
 
     // Fifth row
-    __calendar_leds[26] = {74, 75};
-    __calendar_leds[27] = {77, 78};
+    __calendar_leds[26] = {73, 74};
+    __calendar_leds[27] = {76, 77};
     __calendar_leds[28] = {79, 80};
 
     // Sixth row
@@ -426,7 +426,7 @@ void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
             dsl::entity_manager::entities["lcd.display.line1"] = std::string("   WOOP WOOP!");
 
             // Flash green!
-            flash_index(selected_index, {0x0, 0xff, 0}, 32, 100);
+            flash_index(selected_index, {0x0, 0xff, 0}, 4);
 
             // Back to MoodLighting
             dsl::entity_manager::entities["advent.mode"] = AppMode::MoodLighting;
