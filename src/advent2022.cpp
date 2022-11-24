@@ -47,6 +47,8 @@ void Advent2022::setup()
         leds_for_full.push_back(led);
     __moodlightings.push_back({"Full", leds_for_full});
     __moodlightings.push_back({"Outline", {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 40, 39, 38, 24, 25, 44, 45, 54, 55, 70, 69, 68, 60, 59, 58, 74, 75, 79, 80, 84, 85, 86, 89, 90, 91}});
+    __moodlightings.push_back({"Checkers", {0, 1, 5, 6, 10, 11, 14, 15, 19, 20, 39, 40, 35, 34, 30, 25, 24, 44, 45, 49, 50, 54, 55, 65, 66, 62, 61, 76, 77, 89, 90, 91}});
+    __moodlightings.push_back({"Zebra", {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 73, 74, 75, 76, 77, 78, 79, 80, 89, 90, 91}});
 
     // Create the LEDs for the Calendar
 
@@ -96,7 +98,10 @@ void Advent2022::setup()
     __calendar_leds[30] = {89, 90, 91};
 
     // Set the correct items for each day
-    __calendar_correct = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
+    __calendar_correct = {
+        19, 8, 9, 18, 12, 14, 3, 13, 30, 29,
+        11, 17, 5, 23, 10, 27, 0, 15, 4, 26, 22,
+        24, 7, 28, 16, 1, 21, 6, 25, 20, 2};
 
     // Add listeners to the mode-entities
     dsl::entity_manager::entities["advent.mode"].subscribe(
