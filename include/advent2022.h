@@ -33,7 +33,7 @@
 
 // How annoying is it going to be? Higher is more annoying
 // Can not be < 3 !!
-#define ANNOYANCE_LEVEL 0
+#define ANNOYANCE_LEVEL 3
 #define MONTH 11
 
 enum AppMode
