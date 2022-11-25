@@ -22,8 +22,11 @@
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 
+// Configuration for the NTP updates
+#define NTP_UPDATE_TIME_IN_MINS 480
+
 // Configuration for the LED strip
-#define LED_LENGTH 92
+#define LED_LENGTH 91
 
 // Configure the Advent Calendar annoyance
 #define TURNS 3
@@ -31,6 +34,7 @@
 // How annoying is it going to be? Higher is more annoying
 // Can not be < 3 !!
 #define ANNOYANCE_LEVEL 0
+#define MONTH 11
 
 enum AppMode
 {

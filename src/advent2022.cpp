@@ -165,7 +165,7 @@ void Advent2022::disconnect_wifi()
 void Advent2022::update_ntp(bool force /* = false */)
 {
 
-    if (millis() - __ntp_last_update >= (60 * 60 * 1000) || force)
+    if (millis() - __ntp_last_update >= (NTP_UPDATE_TIME_IN_MINS * 60 * 1000) || force)
     {
         if (reconnect_to_wifi())
         {
@@ -256,7 +256,7 @@ void Advent2022::configure_mode()
     {
         // Check if it is time yet to start the calendar
         Date now = get_date();
-        if (now.year != 2022 || now.month != 11) // TODO: TODO: TODO: aanpassen naar 12, heel belangrijk!!!!
+        if (now.year != 2022 || now.month != MONTH)
         {
             dsl::entity_manager::entities["lcd.display.line0"] = std::string("Het is nog geen");
             dsl::entity_manager::entities["lcd.display.line1"] = std::string("december!");
