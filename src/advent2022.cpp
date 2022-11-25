@@ -431,7 +431,10 @@ void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
             dsl::entity_manager::entities["lcd.display.line1"] = std::string("   WOOP WOOP!");
 
             // Flash green!
-            flash_index(selected_index, {0x0, 0xff, 0}, 4);
+            flash_index(selected_index, {0x0, 0xff, 0}, 16, 75);
+
+            // Wait 250ms to prevent crashes
+            delay(250);
 
             // Back to MoodLighting
             dsl::entity_manager::entities["advent.mode"] = AppMode::MoodLighting;
@@ -452,6 +455,9 @@ void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
 
                 // Flash red
                 flash_index(selected_index, {0xff, 0, 0}, 4);
+
+                // Wait 250ms to prevent crashes
+                delay(250);
 
                 // Continue
                 set_calendar_text();
