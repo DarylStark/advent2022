@@ -465,6 +465,9 @@ void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
                 // Flash red
                 flash_index(selected_index, {0xff, 0, 0}, 4);
 
+                // Wait a second
+                delay(1000);
+
                 // Set time that we can continue
                 __continue_time = millis() + (ANNOYANCE_LEVEL * 60 * 1000);
                 __turns = 0;
