@@ -436,6 +436,9 @@ void Advent2022::select_index(const dsl::entity_manager::EntityEvent &e)
             // Wait 250ms to prevent crashes
             delay(250);
 
+            // Reset the turns index
+            __turns = 0;
+
             // Back to MoodLighting
             dsl::entity_manager::entities["advent.mode"] = AppMode::MoodLighting;
         }
