@@ -11,6 +11,8 @@
 
 #include <arduino_components/liquidcrystal.h>
 
+// #define RESET_WIFI 1
+
 // Global objects for the app
 dsl::arduino_apps::AppBase *advent22;
 
@@ -19,6 +21,15 @@ void setup()
 {
     // Setup Serial
     Serial.begin(115200);
+
+#ifdef RESET_WIFI
+    // Block to delete WIFI details
+    Preferences preferences;
+    preferences.begin("wifi", false);
+    preferences.remove("ssid");
+    preferences.remove("password");
+    return;
+#else
 
     // Flag if we are connected to WiFi
     bool wifi_configured = false;
@@ -71,10 +82,16 @@ void setup()
         advent22 = new WiFiConnect;
 
     advent22->setup();
+#endif
 }
 
 void loop()
 {
+#ifdef RESET_WIFI
+    Serial.println("GEEN FIRMWARE");
+    delay(1000);
+#else
     if (advent22 != nullptr)
         advent22->loop();
+#endif
 }
